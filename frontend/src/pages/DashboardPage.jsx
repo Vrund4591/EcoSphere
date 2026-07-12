@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import { dashboardAPI } from '../services/api';
 import { Card, StatCard, PageHeader, PageLoader, Button } from '../components/ui';
 import { fmtNum } from '../lib/utils';
+import { useAuthStore } from '../store/authStore';
 
 const PILLARS = [
   { key: 'environmental', label: 'Environmental', dot: '#5EA97E', bar: '#3E7C57' },
@@ -38,6 +39,8 @@ function Donut({ value }) {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const isManager = user?.role === 'ADMIN' || user?.role === 'MANAGER';
   const [data, setData] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -81,9 +84,11 @@ export default function DashboardPage() {
         title="Dashboard"
         subtitle={`Weighted E ${scores.weights.env}% · S ${scores.weights.social}% · G ${scores.weights.gov}% — rolled up across departments`}
         actions={
-          <Button variant="secondary" size="sm" onClick={recompute} loading={busy}>
-            <RefreshCw className="h-4 w-4" /> Recompute
-          </Button>
+          isManager ? (
+            <Button variant="secondary" size="sm" onClick={recompute} loading={busy}>
+              <RefreshCw className="h-4 w-4" /> Recompute
+            </Button>
+          ) : null
         }
       />
 
@@ -220,10 +225,21 @@ export default function DashboardPage() {
 
         <Card title="Quick actions">
           <div className="space-y-2.5">
-            <Button className="w-full" onClick={() => navigate('/environmental')}>Log carbon data</Button>
-            <Button variant="secondary" className="w-full" onClick={() => navigate('/gamification')}>Start a challenge</Button>
-            <Button variant="secondary" className="w-full" onClick={() => navigate('/reports')}>View reports</Button>
-            <p className="pt-1 font-mono text-[10.5px] text-slate-500">Scores recompute from live module data</p>
+            {isManager ? (
+              <>
+                <Button className="w-full" onClick={() => navigate('/environmental')}>Log carbon data</Button>
+                <Button variant="secondary" className="w-full" onClick={() => navigate('/gamification')}>Start a challenge</Button>
+                <Button variant="secondary" className="w-full" onClick={() => navigate('/reports')}>View reports</Button>
+                <p className="pt-1 font-mono text-[10.5px] text-slate-500">Scores recompute from live module data</p>
+              </>
+            ) : (
+              <>
+                <Button className="w-full" onClick={() => navigate('/gamification')}>Join a challenge</Button>
+                <Button variant="secondary" className="w-full" onClick={() => navigate('/social')}>Join a CSR activity</Button>
+                <Button variant="secondary" className="w-full" onClick={() => navigate('/governance')}>Acknowledge a policy</Button>
+                <p className="pt-1 font-mono text-[10.5px] text-slate-500">Earn XP & points across all three pillars</p>
+              </>
+            )}
           </div>
         </Card>
       </div>
