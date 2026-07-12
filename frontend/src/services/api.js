@@ -81,3 +81,13 @@ export {
   environmentalGoalsAPI,
   productProfilesAPI,
 } from './environmental';
+
+// TEAMMATES: Gamification + Reports (Samarth / P4)
+export {
+  challengesAPI,
+  challengeParticipationsAPI,
+  badgesAPI,
+  rewardsAPI,
+  leaderboardAPI,
+  reportsAPI,
+} from './gamification';

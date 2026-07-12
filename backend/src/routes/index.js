@@ -50,4 +50,19 @@ router.use('/carbon-transactions', carbonTransactionRoutes);
 router.use('/environmental-goals', environmentalGoalRoutes);
 router.use('/product-profiles', productProfileRoutes);
 
+// TEAMMATES: Gamification + Reports (Samarth / P4)
+const challengeRoutes = require('./challenge.routes');
+const challengeParticipationRoutes = require('./challengeParticipation.routes');
+const badgeRoutes = require('./badge.routes');
+const rewardRoutes = require('./reward.routes');
+const leaderboardRoutes = require('./leaderboard.routes');
+const reportsRoutes = require('./reports.routes');
+
+router.use('/challenges', challengeRoutes);
+router.use('/challenge-participations', challengeParticipationRoutes);
+router.use('/badges', badgeRoutes);
+router.use('/rewards', rewardRoutes);
+router.use('/leaderboard', leaderboardRoutes);
+router.use('/reports', reportsRoutes);
+
 module.exports = router;
