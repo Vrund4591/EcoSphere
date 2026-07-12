@@ -46,9 +46,9 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#EAE8E0] lg:p-8">
-      <div className="flex min-h-screen w-full overflow-hidden bg-[#F6F5F1] lg:min-h-0 lg:max-w-5xl lg:rounded-2xl lg:border lg:border-slate-300 lg:shadow-sm">
+      <div className="flex min-h-screen w-full overflow-hidden bg-[#F6F5F1] lg:min-h-[520px] lg:max-w-5xl lg:rounded-2xl lg:border lg:border-slate-300 lg:shadow-sm">
         {/* Brand panel */}
-        <div className="hidden w-[46%] flex-col justify-between bg-[#14231B] p-11 lg:flex">
+        <div className="hidden w-[46%] flex-col justify-center gap-9 bg-[#14231B] p-11 lg:flex">
           <div className="flex items-center gap-2.5">
             <Mark />
             <span className="font-serif text-[21px] font-medium text-[#F3F1E9]">EcoSphere</span>
@@ -95,7 +95,6 @@ export default function LoginPage() {
                 type="password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                placeholder="••••••••"
                 required
               />
               <Button type="submit" loading={loading} className="w-full">Sign in</Button>
