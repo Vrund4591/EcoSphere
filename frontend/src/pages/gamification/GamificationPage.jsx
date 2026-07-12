@@ -235,6 +235,7 @@ function ChallengesTab({ user }) {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map(ch => {
           const isDraft = ch.status === 'DRAFT';
+          const myp = ch.participations?.[0]; // the current user's own participation, if any
           return (
             <div key={ch.id} className={`flex flex-col gap-2.5 rounded-xl border bg-white p-5 ${isDraft ? 'border-dashed border-slate-300' : 'border-slate-200 shadow-sm'}`}>
               <div className="flex items-start justify-between gap-2">
@@ -255,8 +256,28 @@ function ChallengesTab({ user }) {
                 <span className="font-mono text-[11px] text-slate-500">{ch._count?.participations || 0} in</span>
               </div>
               <div className="mt-1 flex flex-wrap gap-2">
-                {ch.status === 'ACTIVE' && user?.role === 'EMPLOYEE' && (
-                  <Button size="sm" className="flex-1" onClick={() => handleJoin(ch.id)}>Join challenge</Button>
+                {user?.role === 'EMPLOYEE' && (
+                  myp ? (
+                    <div
+                      className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-semibold ${
+                        myp.approvalStatus === 'APPROVED'
+                          ? 'bg-[#E3EEE6] text-[#2C5E43]'
+                          : myp.approvalStatus === 'REJECTED'
+                            ? 'bg-[#F4E2DC] text-[#96422D]'
+                            : 'bg-[#F4ECDA] text-[#8F6A24]'
+                      }`}
+                    >
+                      {myp.approvalStatus === 'APPROVED' ? (
+                        <><CheckCircle2 className="h-4 w-4" /> Completed</>
+                      ) : myp.approvalStatus === 'REJECTED' ? (
+                        <><XCircle className="h-4 w-4" /> Not approved</>
+                      ) : (
+                        <><CheckCircle2 className="h-4 w-4" /> Joined · pending</>
+                      )}
+                    </div>
+                  ) : ch.status === 'ACTIVE' ? (
+                    <Button size="sm" className="flex-1" onClick={() => handleJoin(ch.id)}>Join challenge</Button>
+                  ) : null
                 )}
                 {isManager && (
                   <>

@@ -21,12 +21,22 @@ const list = async (req, res, next) => {
         }
       : {};
 
+    // Include the requester's OWN participation (0 or 1 row) so the UI can tell
+    // whether they already joined — without leaking other employees' rows.
+    const include = {
+      ...INCLUDE,
+      participations: {
+        where: { employeeId: req.user.id },
+        select: { id: true, employeeId: true, approvalStatus: true, proof: true },
+      },
+    };
+
     // `all=true` returns the full list (handy for dropdowns)
     if (all === 'true') {
       const activities = await prisma.cSRActivity.findMany({
         where,
         orderBy: { createdAt: 'desc' },
-        include: INCLUDE,
+        include,
       });
       return res.json(new ApiResponse(200, { activities }, 'CSR activities retrieved'));
     }
@@ -38,7 +48,7 @@ const list = async (req, res, next) => {
         skip,
         take: l,
         orderBy: { createdAt: 'desc' },
-        include: INCLUDE,
+        include,
       }),
       prisma.cSRActivity.count({ where }),
     ]);

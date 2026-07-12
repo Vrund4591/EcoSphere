@@ -14,11 +14,21 @@ const getChallenges = async (req, res, next) => {
     const { page, limit, status, all } = req.query;
     const where = status ? { status } : {};
 
+    // Include the requester's OWN participation (0 or 1 row) so the UI can tell
+    // whether they already joined — without leaking other employees' rows.
+    const include = {
+      ...INCLUDE,
+      participations: {
+        where: { employeeId: req.user.id },
+        select: { id: true, employeeId: true, approvalStatus: true, progress: true, xpAwarded: true, proof: true },
+      },
+    };
+
     if (all === 'true') {
       const challenges = await prisma.challenge.findMany({
         where,
         orderBy: { createdAt: 'desc' },
-        include: INCLUDE,
+        include,
       });
       return res.json(new ApiResponse(200, { challenges }, 'Challenges retrieved'));
     }
@@ -30,7 +40,7 @@ const getChallenges = async (req, res, next) => {
         skip,
         take: l,
         orderBy: { createdAt: 'desc' },
-        include: INCLUDE,
+        include,
       }),
       prisma.challenge.count({ where }),
     ]);

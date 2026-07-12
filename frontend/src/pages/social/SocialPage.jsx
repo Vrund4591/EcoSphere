@@ -208,7 +208,7 @@ function CSRActivities() {
                     </td>
                     <td className="py-2 pr-4">{a._count?.participations ?? 0}</td>
                     <td className="py-2">
-                      <div className="flex justify-end gap-1">
+                      <div className="flex items-center justify-end gap-1">
                         {a.status === 'OPEN' && !hasJoined(a) && (
                           <button
                             onClick={() => openJoin(a)}
@@ -217,6 +217,11 @@ function CSRActivities() {
                           >
                             <UserCheck className="h-4 w-4" />
                           </button>
+                        )}
+                        {hasJoined(a) && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#E3EEE6] px-2 py-0.5 font-mono text-[11px] font-medium text-[#2C5E43]">
+                            <Check className="h-3 w-3" /> Joined
+                          </span>
                         )}
                         {isAdmin && (
                           <>
