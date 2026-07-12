@@ -1,5 +1,7 @@
 import ModulePlaceholder from './ModulePlaceholder';
 import ActualEnvironmentalPage from './environmental/EnvironmentalPage';
+import ActualSocialPage from './social/SocialPage';
+import ActualGovernancePage from './governance/GovernancePage';
 import ActualGamificationPage from './gamification/GamificationPage';
 import ActualReportsPage from './reports/ReportsPage';
 
@@ -8,40 +10,11 @@ export function EnvironmentalPage() {
 }
 
 export function SocialPage() {
-  return (
-    <ModulePlaceholder
-      emoji="👥"
-      title="Social"
-      subtitle="CSR activities, employee participation & diversity"
-      owner="P3"
-      sections={[
-        'CSR Activities',
-        'Employee Participation (approval queue)',
-        'Evidence requirement enforcement',
-        'Diversity Dashboard',
-        'Training Completion',
-        'Social Report',
-      ]}
-    />
-  );
+  return <ActualSocialPage />;
 }
 
 export function GovernancePage() {
-  return (
-    <ModulePlaceholder
-      emoji="🏛"
-      title="Governance"
-      subtitle="Policies, audits & compliance tracking"
-      owner="P3"
-      sections={[
-        'ESG Policies',
-        'Policy Acknowledgements',
-        'Audits',
-        'Compliance Issues (owner + due date + overdue)',
-        'Governance Report',
-      ]}
-    />
-  );
+  return <ActualGovernancePage />;
 }
 
 export function GamificationPage() {
