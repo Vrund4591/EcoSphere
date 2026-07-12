@@ -146,7 +146,7 @@ const redeemReward = async (req, res, next) => {
     // Notify outside transaction (best-effort)
     await notify(userId, {
       type: 'REWARD_REDEEMED',
-      title: '🎁 Reward Redeemed!',
+      title: 'Reward Redeemed!',
       message: `You successfully redeemed "${redemption.reward.name}" for ${redemption.pointsSpent} points.`,
       link: '/gamification',
     });

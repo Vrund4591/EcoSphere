@@ -1,4 +1,4 @@
-# 👥🏛 Tirth — Social + Governance Modules
+# Tirth — Social + Governance Modules
 
 > **Before you start:** read [`AGENTS.md`](../../AGENTS.md) and [`docs/AI_ONBOARDING.md`](../AI_ONBOARDING.md).
 > Schema + conventions are already set — build **APIs + UI against existing models**.
@@ -56,26 +56,26 @@ Tabs: **Policies**, **Policy Acknowledgements** (who acknowledged / pending), **
 (severity badges, **overdue rows highlighted red**, owner + due date shown, status workflow).
 
 ---
-## ⭐ Signature features
+## Signature features
 - **CSR approval → points/XP** (+ evidence enforcement via the Setting toggle).
 - **Compliance ownership + overdue flag + notifications**.
 - **Policy acknowledgement + reminders**.
 
-## 🤝 Coordinate with Samarth (shared gamification helper)
+## Coordinate with Samarth (shared gamification helper)
 Awarding XP/points + badges is shared logic. Samarth builds `backend/src/services/gamification.service.js`
 exposing `awardXp(userId, { xp, points })` and `checkAndAwardBadges(userId)`. Import and call these in your
 CSR approve handler. Until it's pushed, you can inline
 `prisma.user.update({ where:{id}, data:{ xp:{increment:pts}, points:{increment:pts} } })` and add the badge
 check when his service lands.
 
-## ✅ Done when (demo checklist)
+## Done when (demo checklist)
 - [ ] Employee joins a CSR activity + uploads proof → **manager approves → points/XP awarded + notification** (and blocked if evidence required but missing).
 - [ ] Diversity dashboard renders gender/department charts.
 - [ ] Policy can be acknowledged; pending acks are visible.
 - [ ] Raising a compliance issue **notifies the owner + admins**; **overdue issues are flagged**.
 - [ ] Dashboard **Social + Governance scores** move after you add data.
 
-## 📋 Paste this into your Antigravity AI to start
+## Paste this into your Antigravity AI to start
 ```
 This is the EcoSphere repo. First read AGENTS.md and docs/AI_ONBOARDING.md fully and follow every
 convention (ApiResponse → res.data.data on client, auth + role middleware, ApiError, one controller+route

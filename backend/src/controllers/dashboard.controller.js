@@ -63,25 +63,25 @@ async function recentActivity() {
   const feed = [
     ...carbon.map((c) => ({
       type: 'CARBON',
-      icon: '🏭',
+      icon: '',
       text: `${Math.round(c.co2Amount)} kgCO₂e logged${c.department ? ` in ${c.department.name}` : ''}`,
       at: c.createdAt,
     })),
     ...issues.map((i) => ({
       type: 'ISSUE',
-      icon: '⚠',
+      icon: '',
       text: `Compliance issue "${i.title}" (${i.severity})`,
       at: i.createdAt,
     })),
     ...participations.map((p) => ({
       type: 'CSR',
-      icon: '✔',
+      icon: '',
       text: `${p.employee?.name || 'Employee'} completed "${p.activity?.title || 'CSR activity'}"`,
       at: p.updatedAt,
     })),
     ...badges.map((b) => ({
       type: 'BADGE',
-      icon: b.badge?.icon || '🏅',
+      icon: b.badge?.icon || '',
       text: `${b.employee?.name || 'Employee'} unlocked "${b.badge?.name || 'a badge'}"`,
       at: b.awardedAt,
     })),

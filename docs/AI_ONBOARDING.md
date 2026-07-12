@@ -30,7 +30,7 @@ Ports: **backend `http://localhost:5001`**, **frontend `http://localhost:5173`**
 EcoSphere/
 ├── backend/
 │   ├── prisma/
-│   │   ├── schema.prisma      # ⚠️ ALL 20 models already defined (owned by Lead)
+│   │   ├── schema.prisma      # ALL 20 models already defined (owned by Lead)
 │   │   └── seed.js            # demo data
 │   ├── prisma.config.ts       # Prisma 7 CLI datasource (reads DATABASE_URL)
 │   └── src/
@@ -82,7 +82,7 @@ React page  →  services/api.js (axios, auto-attaches JWT)  →  Express route
    →  Prisma  →  PostgreSQL  →  ApiResponse JSON  →  back to the page
 ```
 
-## 6. 🔑 Golden conventions (MUST follow)
+## 6. Golden conventions (MUST follow)
 
 1. **The Prisma schema is DONE.** All 20 models already exist in `backend/prisma/schema.prisma`.
    **You build controllers, routes and pages against existing models — do NOT add/edit models.**
@@ -128,7 +128,7 @@ React page  →  services/api.js (axios, auto-attaches JWT)  →  Express route
 9. **Scoring is automatic.** The dashboard recomputes E/S/G/overall from your data via
    `scoring.service.js`. Just write correct data; scores update. Don't touch scoring unless coordinating with Lead.
 
-10. **Styling:** Tailwind v4, brand color **emerald** (`emerald-600`). ⚠️ Never build class names by string
+10. **Styling:** Tailwind v4, brand color **emerald** (`emerald-600`). Never build class names by string
     interpolation (`bg-${x}-500`) — Tailwind won't detect them. Use full literal class names.
 
 ## 7. Data model (what already exists — group by module)
@@ -147,7 +147,7 @@ React page  →  services/api.js (axios, auto-attaches JWT)  →  Express route
 > Open `backend/prisma/schema.prisma` to see exact fields. `User` has `xp` (lifetime → leaderboard/badges)
 > and `points` (spendable → rewards).
 
-## 8. 🍳 Recipe: add a module (worked example = EmissionFactor)
+## 8. Recipe: add a module (worked example = EmissionFactor)
 
 **Backend — `backend/src/controllers/emissionFactor.controller.js`:**
 ```js
@@ -227,7 +227,7 @@ That's the whole loop. Every resource is this same shape.
 
 | Owner | Area | Models to build APIs/UI for |
 |---|---|---|
-| **Vrund (Lead)** | Platform ✅ + integration/help | done: auth, users, departments, categories, settings, dashboard, scoring |
+| **Vrund (Lead)** | Platform + integration/help | done: auth, users, departments, categories, settings, dashboard, scoring |
 | **Prince** | Environmental | EmissionFactor, CarbonTransaction, EnvironmentalGoal, ProductESGProfile |
 | **Tirth** | Social + Governance | CSRActivity, EmployeeParticipation, ESGPolicy, PolicyAcknowledgement, Audit, ComplianceIssue |
 | **Samarth** | Gamification + Reports | Challenge, ChallengeParticipation, Badge, Reward, Leaderboard, Reports |

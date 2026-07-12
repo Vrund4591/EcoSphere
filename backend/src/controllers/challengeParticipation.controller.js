@@ -119,7 +119,7 @@ const approveParticipation = async (req, res, next) => {
     // Notify the employee
     await notify(existing.employeeId, {
       type: 'CHALLENGE_APPROVED',
-      title: '🎉 Challenge Approved!',
+      title: 'Challenge Approved!',
       message: `Your participation in "${existing.challenge.title}" was approved. +${xpAmount} XP awarded!`,
       link: '/gamification',
     });
@@ -154,7 +154,7 @@ const rejectParticipation = async (req, res, next) => {
 
     await notify(existing.employeeId, {
       type: 'CHALLENGE_REJECTED',
-      title: '❌ Challenge Rejected',
+      title: 'Challenge Rejected',
       message: `Your participation in "${existing.challenge.title}" was rejected.${reason ? ' Reason: ' + reason : ''}`,
       link: '/gamification',
     });

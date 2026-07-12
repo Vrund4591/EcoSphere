@@ -1,4 +1,4 @@
-# 🏆📈 Samarth — Gamification + Reports
+# Samarth — Gamification + Reports
 
 > **Before you start:** read [`AGENTS.md`](../../AGENTS.md) and [`docs/AI_ONBOARDING.md`](../AI_ONBOARDING.md).
 > Schema + conventions are already set — build **APIs + UI against existing models**.
@@ -19,7 +19,7 @@ helper the Social module depends on — **do this first**.
 - **Reward**: `name`, `description?`, `pointsRequired` (Int), `stock` (Int), `status`
 - **RewardRedemption**: `pointsSpent` (Int), `rewardId`, `employeeId`
 
-### ⭐ FIRST — build the shared helper `backend/src/services/gamification.service.js`
+### FIRST — build the shared helper `backend/src/services/gamification.service.js`
 Both your challenge-approval and Tirth's CSR-approval call this:
 ```js
 const prisma = require('../config/database');
@@ -42,7 +42,7 @@ async function checkAndAwardBadges(userId) {
       const exists = await prisma.employeeBadge.findUnique({ where: { employeeId_badgeId: { employeeId: userId, badgeId: b.id } } });
       if (!exists) {
         await prisma.employeeBadge.create({ data: { employeeId: userId, badgeId: b.id } });
-        await notify(userId, { type: 'BADGE_UNLOCK', title: 'Badge unlocked! ' + (b.icon || '🏅'), message: `You earned "${b.name}"`, link: '/gamification' });
+        await notify(userId, { type: 'BADGE_UNLOCK', title: 'Badge unlocked! ' + (b.icon || ''), message: `You earned "${b.name}"`, link: '/gamification' });
       }
     }
   }
@@ -83,14 +83,14 @@ department ranking, reuse `ScoreBar`).
 - **Export**: CSV works today via `downloadCSV(rows, 'report.csv')` from `frontend/src/lib/utils.js`.
   Excel (`xlsx`) and PDF (`jspdf` + `jspdf-autotable`) are nice-to-have (Tier 2).
 
-## ✅ Done when (demo checklist)
+## Done when (demo checklist)
 - [ ] Employee joins a challenge → submits → **manager approves → XP awarded → badge auto-unlocks → leaderboard updates**.
 - [ ] Reward **redemption** deducts points + stock (and blocks if not enough / out of stock).
 - [ ] Challenge lifecycle transitions work (Draft→Active→Under Review→Completed / Archived).
 - [ ] Reports generate + **export to CSV**; custom builder filters work.
 - [ ] `gamification.service.js` is pushed early so Tirth's CSR approvals can award XP + badges too.
 
-## 📋 Paste this into your Antigravity AI to start
+## Paste this into your Antigravity AI to start
 ```
 This is the EcoSphere repo. First read AGENTS.md and docs/AI_ONBOARDING.md fully and follow every convention
 (ApiResponse → res.data.data on client, auth + role middleware, ApiError, one controller+route per resource,

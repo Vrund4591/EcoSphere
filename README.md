@@ -1,4 +1,4 @@
-# 🌱 EcoSphere — ESG Management Platform
+# EcoSphere — ESG Management Platform
 
 Odoo Hackathon '26 · Virtual Round · Problem Statement: **EcoSphere (ESG Management Platform)**
 

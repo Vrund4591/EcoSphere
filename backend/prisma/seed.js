@@ -14,10 +14,10 @@ const daysFromNow = (n) => new Date(now.getTime() + n * 86400000);
 const pick = (arr, i) => arr[i % arr.length];
 
 async function main() {
-  console.log('🌱 Seeding EcoSphere...\n');
+  console.log('Seeding EcoSphere...\n');
 
   // 1. Clean (reverse dependency order)
-  console.log('🧹 Cleaning...');
+  console.log('Cleaning...');
   await prisma.trainingCompletion.deleteMany();
   await prisma.training.deleteMany();
   await prisma.rewardRedemption.deleteMany();
@@ -47,7 +47,7 @@ async function main() {
   await prisma.setting.create({ data: {} });
 
   // 3. Departments
-  console.log('🏛️  Departments...');
+  console.log('Departments...');
   const D = {};
   for (const d of [
     { name: 'Manufacturing', code: 'MFG' },
@@ -62,7 +62,7 @@ async function main() {
   });
 
   // 4. Users
-  console.log('👥 Users...');
+  console.log('Users...');
   const pwCache = {};
   const hash = async (pw) => (pwCache[pw] ||= await bcrypt.hash(pw, 12));
 
@@ -105,7 +105,7 @@ async function main() {
   }
 
   // 5. Categories
-  console.log('🏷️  Categories...');
+  console.log('Categories...');
   const C = {};
   const cats = [
     { name: 'Environment', type: 'CSR_ACTIVITY' },
@@ -120,7 +120,7 @@ async function main() {
   for (const c of cats) C[c.name] = await prisma.category.create({ data: c });
 
   // 6. Emission factors
-  console.log('🌫️  Emission factors...');
+  console.log('Emission factors...');
   const F = {};
   const factors = [
     { name: 'Grid Electricity', unit: 'kWh', factor: 0.82, source: 'PURCHASE' },
@@ -137,7 +137,7 @@ async function main() {
   const deptList = [D.MFG, D.LOG, D.COR, D.RND, D.SAL];
 
   // 7. Carbon transactions across 12 months (drives the trend chart)
-  console.log('🏭 Carbon transactions...');
+  console.log('Carbon transactions...');
   const txns = [];
   let ti = 0;
   for (let m = 11; m >= 0; m--) {
@@ -159,7 +159,7 @@ async function main() {
   await prisma.carbonTransaction.createMany({ data: txns });
 
   // 8. Environmental goals
-  console.log('🎯 Environmental goals...');
+  console.log('Environmental goals...');
   await prisma.environmentalGoal.createMany({
     data: [
       { name: 'Reduce Fleet Emissions', departmentId: D.LOG.id, targetCo2: 500, currentCo2: 390, deadline: daysFromNow(160), status: 'ON_TRACK' },
@@ -180,7 +180,7 @@ async function main() {
   });
 
   // 10. CSR activities
-  console.log('🤝 CSR activities...');
+  console.log('CSR activities...');
   const A = {};
   const activities = [
     { title: 'Tree Plantation Drive', cat: 'Environment', pointsValue: 50, evidenceRequired: true, location: 'City Park' },
@@ -228,7 +228,7 @@ async function main() {
   }
 
   // 12. ESG policies
-  console.log('📜 Policies...');
+  console.log('Policies...');
   const P = {};
   const policies = [
     { title: 'Anti-Corruption Policy', pillar: 'GOVERNANCE' },
@@ -264,7 +264,7 @@ async function main() {
   }
 
   // 14. Audits
-  console.log('🔎 Audits & compliance...');
+  console.log('Audits & compliance...');
   const AU = {};
   AU.waste = await prisma.audit.create({ data: { title: 'Q2 Waste Audit', departmentId: D.MFG.id, auditor: 'S. Nair', date: daysFromNow(-30), findings: '3 minor issues', status: 'COMPLETED' } });
   AU.vendor = await prisma.audit.create({ data: { title: 'Vendor Compliance Check', departmentId: D.LOG.id, auditor: 'R. Iyer', date: daysFromNow(-11), findings: '1 open issue', status: 'UNDER_REVIEW' } });
@@ -282,7 +282,7 @@ async function main() {
   });
 
   // 16. Challenges
-  console.log('🏆 Gamification...');
+  console.log('Gamification...');
   const CH = {};
   const challenges = [
     { title: 'Sustainability Sprint', cat: 'Energy', xp: 200, difficulty: 'HARD', status: 'ACTIVE', deadline: daysFromNow(8), evidenceRequired: true },
@@ -332,7 +332,7 @@ async function main() {
   }
 
   // 17b. Trainings + completions
-  console.log('🎓 Trainings...');
+  console.log('Trainings...');
   const trainingsData = [
     { title: 'Workplace Safety Fundamentals', category: 'Safety', provider: 'Internal EHS', durationHours: 2 },
     { title: 'Anti-Corruption & Ethics', category: 'Compliance', provider: 'Legal', durationHours: 1.5 },
@@ -370,10 +370,10 @@ async function main() {
   // 18. Badges
   const B = {};
   const badges = [
-    { name: 'Green Beginner', icon: '🌱', unlockType: 'XP', unlockThreshold: 100, description: 'Earn 100 XP' },
-    { name: 'Carbon Saver', icon: '♻️', unlockType: 'XP', unlockThreshold: 500, description: 'Earn 500 XP' },
-    { name: 'Sustainability Champion', icon: '🌍', unlockType: 'XP', unlockThreshold: 1000, description: 'Earn 1000 XP' },
-    { name: 'Team Player', icon: '⭐', unlockType: 'CHALLENGES', unlockThreshold: 3, description: 'Complete 3 challenges' },
+    { name: 'Green Beginner', icon: '', unlockType: 'XP', unlockThreshold: 100, description: 'Earn 100 XP' },
+    { name: 'Carbon Saver', icon: '', unlockType: 'XP', unlockThreshold: 500, description: 'Earn 500 XP' },
+    { name: 'Sustainability Champion', icon: '', unlockType: 'XP', unlockThreshold: 1000, description: 'Earn 1000 XP' },
+    { name: 'Team Player', icon: '', unlockType: 'CHALLENGES', unlockThreshold: 3, description: 'Complete 3 challenges' },
   ];
   for (const b of badges) B[b.name] = await prisma.badge.create({ data: b });
 
@@ -390,7 +390,7 @@ async function main() {
   }
 
   // 19. Rewards
-  console.log('🎁 Rewards...');
+  console.log('Rewards...');
   const R = {};
   const rewards = [
     { name: 'Eco Tote Bag', pointsRequired: 100, stock: 50 },
@@ -404,7 +404,7 @@ async function main() {
   await prisma.rewardRedemption.create({ data: { rewardId: R['Eco Tote Bag'].id, employeeId: U['dev@ecosphere.com'].id, pointsSpent: 100 } });
   await prisma.rewardRedemption.create({ data: { rewardId: R['Reusable Coffee Cup'].id, employeeId: U['aditi@ecosphere.com'].id, pointsSpent: 150 } });
 
-  console.log('\n✅ Seed complete!\n');
+  console.log('\nSeed complete!\n');
   console.log('   Test accounts (password shown):');
   console.log('   ┌─────────────────────────────┬──────────────┬──────────────┐');
   console.log('   │ admin@ecosphere.com         │ ADMIN        │ Admin@123    │');
@@ -415,7 +415,7 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error('❌ Seed failed:', e);
+    console.error('Seed failed:', e);
     process.exit(1);
   })
   .finally(async () => {

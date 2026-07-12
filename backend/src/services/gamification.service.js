@@ -45,7 +45,7 @@ async function checkAndAwardBadges(userId) {
         });
         await notify(userId, {
           type: 'BADGE_UNLOCK',
-          title: 'Badge unlocked! ' + (b.icon || '🏅'),
+          title: 'Badge unlocked! ' + (b.icon || ''),
           message: `You earned "${b.name}"`,
           link: '/gamification',
         });

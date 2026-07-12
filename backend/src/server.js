@@ -29,7 +29,7 @@ app.use('/api', routes);
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: '🌱 EcoSphere — ESG Management Platform API',
+    message: 'EcoSphere — ESG Management Platform API',
     health: '/api/health',
   });
 });
@@ -40,7 +40,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5001;
 const server = app.listen(PORT, () => {
   console.log(
-    `\n🌱 EcoSphere API running on http://localhost:${PORT}  (env: ${process.env.NODE_ENV || 'development'})\n`
+    `\nEcoSphere API running on http://localhost:${PORT}  (env: ${process.env.NODE_ENV || 'development'})\n`
   );
 });
 

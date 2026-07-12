@@ -1,4 +1,4 @@
-# 🌱 Prince — Environmental Module
+# Prince — Environmental Module
 
 > **Before you start:** read [`AGENTS.md`](../../AGENTS.md) and [`docs/AI_ONBOARDING.md`](../AI_ONBOARDING.md).
 > The database schema and all conventions are already set — you build **APIs + UI against existing models**.
@@ -32,7 +32,7 @@ router.use('/product-profiles', require('./productProfile.routes'));
 ```
 Guard writes with `isAdminOrManager`; reads with just `authenticate`. On list endpoints `include: { department: true, emissionFactor: true }`.
 
-## ⭐ Signature feature — Auto Emission Calculation
+## Signature feature — Auto Emission Calculation
 On **create/update** of a CarbonTransaction:
 ```js
 const { getOrCreateSettings } = require('../controllers/setting.controller');
@@ -57,13 +57,13 @@ Tabs (mirror the mockup):
 4. **Product ESG Profiles** — table + CRUD.
 Use `Card, Button, Input, Select, Modal, Badge, PageLoader` from `../../components/ui`; `toast` for feedback.
 
-## ✅ Done when (demo checklist)
+## Done when (demo checklist)
 - [ ] Add an emission factor → log a carbon transaction → **CO₂ auto-calculates** from quantity × factor.
 - [ ] A goal's progress bar reflects data; statuses show (Active/On Track/Completed).
 - [ ] The main **Dashboard's Environmental score + emissions trend** move after you add data.
 - [ ] Everything role-gated (employees can view; managers/admins edit).
 
-## 📋 Paste this into your Antigravity AI to start
+## Paste this into your Antigravity AI to start
 ```
 This is the EcoSphere repo. First read AGENTS.md and docs/AI_ONBOARDING.md fully — follow every
 convention there (ApiResponse shape res.data.data, auth middleware, ApiError, one controller+route per

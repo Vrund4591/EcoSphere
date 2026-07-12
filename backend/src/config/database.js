@@ -20,9 +20,9 @@ if (process.env.DATABASE_URL?.startsWith('prisma+postgres://')) {
 }
 
 prisma.$connect()
-  .then(() => console.log('✅ Database connected'))
+  .then(() => console.log('Database connected'))
   .catch((error) => {
-    console.error('❌ Database connection failed:', error);
+    console.error('Database connection failed:', error);
     process.exit(1);
   });
 
