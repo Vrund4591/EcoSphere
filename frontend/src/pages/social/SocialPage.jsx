@@ -35,6 +35,12 @@ import {
 
 const TABS = ['CSR Activities', 'Participation Queue', 'Diversity Dashboard', 'Training'];
 
+// Proof files are served by the backend (/uploads/...), not the Vite dev server —
+// resolve them against the API origin (VITE_API_URL minus the trailing /api).
+const FILE_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/api\/?$/, '');
+const proofHref = (proof) =>
+  !proof ? null : /^https?:\/\//i.test(proof) ? proof : `${FILE_BASE}/${proof.replace(/^\/+/, '')}`;
+
 /* ================================================================
    Tab 1 — CSR Activities
    ================================================================ */
@@ -483,9 +489,9 @@ function ParticipationQueue() {
                   <td className="py-2 pr-4">{p.activity?.title || '—'}</td>
                   <td className="py-2 pr-4">{p.activity?.pointsValue ?? 0}</td>
                   <td className="py-2 pr-4">
-                    {p.proofUrl ? (
+                    {p.proof ? (
                       <a
-                        href={p.proofUrl}
+                        href={proofHref(p.proof)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-emerald-600 hover:underline"
@@ -497,11 +503,11 @@ function ParticipationQueue() {
                     )}
                   </td>
                   <td className="py-2 pr-4">
-                    <Badge status={p.status}>{p.status}</Badge>
+                    <Badge status={p.approvalStatus}>{p.approvalStatus}</Badge>
                   </td>
                   <td className="py-2 pr-4">{fmtDate(p.createdAt)}</td>
                   <td className="py-2">
-                    {isAdmin && p.status === 'PENDING' && (
+                    {isAdmin && p.approvalStatus === 'PENDING' && (
                       <div className="flex justify-end gap-1">
                         <button
                           onClick={() => handleApprove(p.id)}
