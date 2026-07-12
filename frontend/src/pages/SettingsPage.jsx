@@ -305,16 +305,38 @@ function ConfigForm({ notificationsTab }) {
     return (
       <Card title="Notification Settings">
         <div className="space-y-3">
+          <p className="text-sm font-semibold text-slate-700">In-app notifications</p>
+          <Toggle
+            label="New compliance issues"
+            hint="Notify the owner + admins when a compliance issue is raised"
+            checked={s.notifyComplianceIssue}
+            onChange={(v) => setS({ ...s, notifyComplianceIssue: v })}
+          />
+          <Toggle
+            label="CSR / Challenge approval decisions"
+            hint="Notify employees when their participation is approved or rejected"
+            checked={s.notifyApprovals}
+            onChange={(v) => setS({ ...s, notifyApprovals: v })}
+          />
+          <Toggle
+            label="Policy acknowledgement reminders"
+            hint="Notify employees who haven't acknowledged a policy"
+            checked={s.notifyPolicyReminders}
+            onChange={(v) => setS({ ...s, notifyPolicyReminders: v })}
+          />
+          <Toggle
+            label="Badge unlocks"
+            hint="Notify employees the moment they earn a badge"
+            checked={s.notifyBadgeUnlocks}
+            onChange={(v) => setS({ ...s, notifyBadgeUnlocks: v })}
+          />
+          <p className="pt-2 text-sm font-semibold text-slate-700">Email</p>
           <Toggle
             label="Email alerts for new compliance issues"
             hint="Send an email (in addition to in-app) when a compliance issue is raised"
             checked={s.emailAlertsComplianceIssues}
             onChange={(v) => setS({ ...s, emailAlertsComplianceIssues: v })}
           />
-          <p className="text-xs text-slate-400">
-            In-app notifications are always on for approvals, badge unlocks, compliance issues and
-            policy reminders.
-          </p>
           <Button onClick={save}>Save</Button>
         </div>
       </Card>

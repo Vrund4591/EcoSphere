@@ -1,13 +1,33 @@
 const prisma = require('../config/database');
 
+// Maps a notification type to the Setting toggle that gates it (in-app).
+// Types not listed here (e.g. REWARD_REDEEMED) are always delivered.
+const TYPE_TO_SETTING = {
+  COMPLIANCE_ISSUE: 'notifyComplianceIssue',
+  CSR_APPROVAL: 'notifyApprovals',
+  CSR_REJECTION: 'notifyApprovals',
+  CHALLENGE_APPROVED: 'notifyApprovals',
+  CHALLENGE_REJECTED: 'notifyApprovals',
+  POLICY_REMINDER: 'notifyPolicyReminders',
+  BADGE_UNLOCK: 'notifyBadgeUnlocks',
+};
+
+async function isTypeEnabled(type) {
+  const field = TYPE_TO_SETTING[type];
+  if (!field) return true;
+  const settings = await prisma.setting.findFirst();
+  return !settings || settings[field] !== false;
+}
+
 /**
- * In-app notification service (Tier 1). Email is a Tier-3 add-on.
- * Every write is best-effort — a failed notification must never break the
- * business action that triggered it.
+ * In-app notification service (Tier 1). Delivery of each category is
+ * configurable via Settings → Notification Settings. Every write is
+ * best-effort — a failed notification must never break the triggering action.
  */
 async function notify(userId, { type, title, message = '', link = null }) {
   if (!userId) return null;
   try {
+    if (!(await isTypeEnabled(type))) return null;
     return await prisma.notification.create({
       data: { userId, type, title, message, link },
     });
