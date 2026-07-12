@@ -18,6 +18,8 @@ async function main() {
 
   // 1. Clean (reverse dependency order)
   console.log('🧹 Cleaning...');
+  await prisma.trainingCompletion.deleteMany();
+  await prisma.training.deleteMany();
   await prisma.rewardRedemption.deleteMany();
   await prisma.employeeBadge.deleteMany();
   await prisma.challengeParticipation.deleteMany();
@@ -327,6 +329,42 @@ async function main() {
         proof: status === 'APPROVED' ? 'evidence.pdf' : null,
       },
     });
+  }
+
+  // 17b. Trainings + completions
+  console.log('🎓 Trainings...');
+  const trainingsData = [
+    { title: 'Workplace Safety Fundamentals', category: 'Safety', provider: 'Internal EHS', durationHours: 2 },
+    { title: 'Anti-Corruption & Ethics', category: 'Compliance', provider: 'Legal', durationHours: 1.5 },
+    { title: 'ESG Awareness 101', category: 'ESG', provider: 'Sustainability Office', durationHours: 1 },
+    { title: 'Diversity & Inclusion', category: 'Diversity', provider: 'HR', durationHours: 1 },
+    { title: 'Data Privacy & Security', category: 'Compliance', provider: 'IT Security', durationHours: 2 },
+  ];
+  const TR = [];
+  for (const t of trainingsData) {
+    TR.push(
+      await prisma.training.create({
+        data: { ...t, description: `${t.title} — mandatory ${t.category.toLowerCase()} training.` },
+      })
+    );
+  }
+  const empUsers = usersData.filter((u) => u.role !== 'ADMIN').map((u) => U[u.email]);
+  let tc = 0;
+  for (const tr of TR) {
+    for (const emp of empUsers) {
+      tc++;
+      if (tc % 3 !== 0) {
+        await prisma.trainingCompletion.create({
+          data: {
+            trainingId: tr.id,
+            employeeId: emp.id,
+            status: 'COMPLETED',
+            completedAt: daysFromNow(-((tc % 25) + 1)),
+            score: 70 + (tc % 30),
+          },
+        });
+      }
+    }
   }
 
   // 18. Badges

@@ -109,6 +109,7 @@ model User {
   badges                  EmployeeBadge[]
   redemptions             RewardRedemption[]
   notifications           Notification[]
+  trainingCompletions     TrainingCompletion[]
 
   @@index([email])
   @@index([departmentId])
@@ -150,6 +151,39 @@ model Category {
   challenges    Challenge[]
 }
 
+// ==================== SOCIAL: TRAINING ====================
+
+model Training {
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  provider      String?
+  category      String? // e.g. Safety, Compliance, ESG, Diversity
+  durationHours Float    @default(0)
+  status        String   @default("ACTIVE")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  completions   TrainingCompletion[]
+}
+
+model TrainingCompletion {
+  id          String    @id @default(uuid())
+  status      String    @default("ASSIGNED") // ASSIGNED / COMPLETED
+  score       Int?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  trainingId  String
+  training    Training  @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  employeeId  String
+  employee    User      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([trainingId, employeeId])
+  @@index([employeeId])
+}
+
 // Singleton org configuration (one row)
 model Setting {
   id                          String   @id @default(uuid())
@@ -157,6 +191,10 @@ model Setting {
   evidenceRequiredForCSR      Boolean  @default(true)
   autoAwardBadges             Boolean  @default(true)
   emailAlertsComplianceIssues Boolean  @default(false)
+  notifyComplianceIssue       Boolean  @default(true)
+  notifyApprovals             Boolean  @default(true)
+  notifyPolicyReminders       Boolean  @default(true)
+  notifyBadgeUnlocks          Boolean  @default(true)
   weightEnv                   Int      @default(40)
   weightSocial                Int      @default(30)
   weightGov                   Int      @default(30)

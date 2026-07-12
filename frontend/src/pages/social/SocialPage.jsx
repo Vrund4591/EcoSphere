@@ -19,6 +19,7 @@ import {
 import { cn, fmtDate } from '../../lib/utils';
 import { useAuthStore } from '../../store/authStore';
 import { CHART_COLORS } from '../../config/constants';
+import TrainingTab from './TrainingTab';
 import {
   PieChart,
   Pie,
@@ -32,7 +33,7 @@ import {
   Legend,
 } from 'recharts';
 
-const TABS = ['CSR Activities', 'Participation Queue', 'Diversity Dashboard'];
+const TABS = ['CSR Activities', 'Participation Queue', 'Diversity Dashboard', 'Training'];
 
 /* ================================================================
    Tab 1 — CSR Activities
@@ -654,6 +655,7 @@ export default function SocialPage() {
       {tab === 'CSR Activities' && <CSRActivities />}
       {tab === 'Participation Queue' && <ParticipationQueue />}
       {tab === 'Diversity Dashboard' && <DiversityDashboard />}
+      {tab === 'Training' && <TrainingTab />}
     </div>
   );
 }

@@ -82,4 +82,8 @@ router.use('/acknowledgements', acknowledgementRoutes);
 router.use('/audits', auditRoutes);
 router.use('/compliance-issues', complianceIssueRoutes);
 
+// Training (Social) — completion tracking
+const trainingRoutes = require('./training.routes');
+router.use('/trainings', trainingRoutes);
+
 module.exports = router;

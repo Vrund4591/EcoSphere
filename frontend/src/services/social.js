@@ -20,3 +20,11 @@ export const participationsAPI = {
 export const diversityAPI = {
   get: () => api.get('/social/diversity'),
 };
+
+export const trainingsAPI = {
+  getAll: (params) => api.get('/trainings', { params }),
+  create: (d) => api.post('/trainings', d),
+  update: (id, d) => api.put(`/trainings/${id}`, d),
+  remove: (id) => api.delete(`/trainings/${id}`),
+  complete: (id, d) => api.post(`/trainings/${id}/complete`, d || {}),
+};
