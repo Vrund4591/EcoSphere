@@ -40,4 +40,14 @@ router.use('/dashboard', dashboardRoutes);
 //   router.use('/emission-factors', emissionFactorRoutes);
 // ============================================================
 
+const emissionFactorRoutes = require('./emissionFactor.routes');
+const carbonTransactionRoutes = require('./carbonTransaction.routes');
+const environmentalGoalRoutes = require('./environmentalGoal.routes');
+const productProfileRoutes = require('./productProfile.routes');
+
+router.use('/emission-factors', emissionFactorRoutes);
+router.use('/carbon-transactions', carbonTransactionRoutes);
+router.use('/environmental-goals', environmentalGoalRoutes);
+router.use('/product-profiles', productProfileRoutes);
+
 module.exports = router;

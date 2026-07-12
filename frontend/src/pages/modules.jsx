@@ -1,22 +1,8 @@
 import ModulePlaceholder from './ModulePlaceholder';
+import ActualEnvironmentalPage from './environmental/EnvironmentalPage';
 
 export function EnvironmentalPage() {
-  return (
-    <ModulePlaceholder
-      emoji="🌱"
-      title="Environmental"
-      subtitle="Carbon accounting, emission factors & sustainability goals"
-      owner="P2"
-      sections={[
-        'Emission Factors',
-        'Carbon Transactions (auto-calculated)',
-        'Environmental Goals',
-        'Product ESG Profiles',
-        'Emissions trend & department carbon',
-        'Environmental Report',
-      ]}
-    />
-  );
+  return <ActualEnvironmentalPage />;
 }
 
 export function SocialPage() {
