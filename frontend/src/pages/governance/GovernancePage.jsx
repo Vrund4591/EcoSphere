@@ -29,7 +29,7 @@ function Policies() {
 
   const load = async () => {
     const res = await policiesAPI.getAll();
-    setRows(res.data.data.items);
+    setRows(res.data.data.data);
   };
   useEffect(() => { load(); }, []);
 
@@ -78,7 +78,7 @@ function Policies() {
   const remind = async (id) => {
     try {
       const res = await policiesAPI.remind(id);
-      const count = res.data.data.notified;
+      const count = res.data.data.notifiedCount;
       toast.success(`Reminder sent to ${count} user${count !== 1 ? 's' : ''}`);
     } catch (e) {
       toast.error(e.response?.data?.message || 'Remind failed');
@@ -198,7 +198,7 @@ function Acknowledgements() {
     const params = {};
     if (statusFilter) params.status = statusFilter;
     const res = await acknowledgementsAPI.getAll(params);
-    setRows(res.data.data.items);
+    setRows(res.data.data.data);
   };
   useEffect(() => { load(); }, [statusFilter]);
 
@@ -284,7 +284,7 @@ function Audits() {
       auditsAPI.getAll(),
       departmentsAPI.getAll({ all: true }),
     ]);
-    setRows(a.data.data.items);
+    setRows(a.data.data.data);
     setDepartments(d.data.data.departments);
   };
   useEffect(() => { load(); }, []);
@@ -433,9 +433,9 @@ function ComplianceIssues() {
       usersAPI.getAll({ limit: 200 }),
       auditsAPI.getAll(),
     ]);
-    setRows(c.data.data.items);
+    setRows(c.data.data.data);
     setUsers(u.data.data.data);
-    setAudits(a.data.data.items);
+    setAudits(a.data.data.data);
   };
   useEffect(() => { load(); }, [statusFilter, severityFilter]);
 

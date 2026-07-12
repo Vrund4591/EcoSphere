@@ -56,7 +56,7 @@ function CSRActivities() {
         csrActivitiesAPI.getAll({ all: true }),
         categoriesAPI.getAll({ type: 'CSR_ACTIVITY' }),
       ]);
-      setRows(a.data.data.items);
+      setRows(a.data.data.activities);
       setCategories(c.data.data.categories);
     } catch {
       toast.error('Failed to load activities');
@@ -404,7 +404,7 @@ function ParticipationQueue() {
       const params = {};
       if (statusFilter) params.status = statusFilter;
       const res = await participationsAPI.getAll(params);
-      setRows(res.data.data.items);
+      setRows(res.data.data.data);
     } catch {
       toast.error('Failed to load participations');
     }
