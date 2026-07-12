@@ -4,6 +4,7 @@ const prisma = require('../config/database');
 const ApiError = require('../utils/ApiError');
 const ApiResponse = require('../utils/ApiResponse');
 const { JWT, ROLES } = require('../config/constants');
+const { sendWelcomeEmail } = require('../services/email.service');
 
 const signToken = (userId) =>
   jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: JWT.EXPIRES_IN });
@@ -33,6 +34,9 @@ const signup = async (req, res, next) => {
       },
       include: { department: true },
     });
+
+    // Transactional welcome email — best-effort, never blocks the response.
+    sendWelcomeEmail(user).catch((e) => console.error('welcome email failed:', e.message));
 
     const token = signToken(user.id);
     res

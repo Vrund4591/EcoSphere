@@ -332,8 +332,8 @@ function ConfigForm({ notificationsTab }) {
           />
           <p className="pt-2 text-sm font-semibold text-slate-700">Email</p>
           <Toggle
-            label="Email alerts for new compliance issues"
-            hint="Send an email (in addition to in-app) when a compliance issue is raised"
+            label="Email alerts"
+            hint="Also email users (in addition to in-app) for the enabled categories above — approvals, badges, compliance & policy reminders. Requires SMTP configured on the server."
             checked={s.emailAlertsComplianceIssues}
             onChange={(v) => setS({ ...s, emailAlertsComplianceIssues: v })}
           />
