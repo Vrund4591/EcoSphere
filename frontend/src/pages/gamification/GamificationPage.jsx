@@ -35,6 +35,58 @@ const STATUS_COLOR = {
   ARCHIVED: 'bg-slate-200 text-slate-500',
 };
 
+// ─── Distinct badge medallions ────────────────────────────────────────────────
+const BADGE_SKINS = [
+  { from: '#3E7C57', to: '#2C5E43', ring: '#5EA97E', tint: '#E3EEE6' }, // forest
+  { from: '#C99A45', to: '#8F6A24', ring: '#D9AE5C', tint: '#F4ECDA' }, // gold
+  { from: '#4E71A8', to: '#35507C', ring: '#7C93C4', tint: '#E7ECF4' }, // blue
+  { from: '#7A64AE', to: '#5B4785', ring: '#9D8AC9', tint: '#ECE7F3' }, // purple
+  { from: '#B4553B', to: '#96422D', ring: '#C58060', tint: '#F4E2DC' }, // rust
+  { from: '#3E9E8E', to: '#2C6E62', ring: '#5EBBA9', tint: '#DDF0EC' }, // teal
+];
+function badgeSkin(name = '') {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return BADGE_SKINS[h % BADGE_SKINS.length];
+}
+const HEX_POINTS = '28,3 51,16 51,40 28,53 5,40 5,16';
+
+// A unique hexagonal crest per badge — colored by a hash of its name, greyed + dashed when locked.
+export function BadgeMedal({ badge, earned, size = 56 }) {
+  const skin = badgeSkin(badge.name);
+  const gid = `bm-${badge.id}-${earned ? 'on' : 'off'}`;
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox="0 0 56 56">
+        <defs>
+          <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={earned ? skin.from : '#DAD6C9'} />
+            <stop offset="100%" stopColor={earned ? skin.to : '#BDB9AB'} />
+          </linearGradient>
+        </defs>
+        <polygon
+          points={HEX_POINTS}
+          fill={`url(#${gid})`}
+          stroke={earned ? skin.ring : '#C9C5B8'}
+          strokeWidth="1.5"
+          strokeDasharray={earned ? '0' : '3 3'}
+        />
+      </svg>
+      <div
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ fontSize: size * 0.42, filter: earned ? 'none' : 'grayscale(1)', opacity: earned ? 1 : 0.5 }}
+      >
+        {badge.icon || '🏅'}
+      </div>
+      {!earned && (
+        <div className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[9px] shadow">
+          🔒
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StatusBadge({ status }) {
   return (
     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLOR[status] || 'bg-slate-100 text-slate-600'}`}>
@@ -57,10 +109,8 @@ function ChallengesTab({ user }) {
   const load = useCallback(async () => {
     try {
       setLoading(true);
-      const params = { all: 'true' };
-      if (filterStatus) params.status = filterStatus;
       const [cRes, catRes] = await Promise.all([
-        challengesAPI.getAll(params),
+        challengesAPI.getAll({ all: 'true' }),
         categoriesAPI.getAll({ all: 'true' }),
       ]);
       setChallenges(cRes.data.data.challenges || []);
@@ -70,7 +120,7 @@ function ChallengesTab({ user }) {
     } finally {
       setLoading(false);
     }
-  }, [filterStatus]);
+  }, []);
 
   useEffect(() => { load(); }, [load]);
 
@@ -143,76 +193,74 @@ function ChallengesTab({ user }) {
     }
   };
 
-  const grouped = ['ACTIVE', 'UNDER_REVIEW', 'DRAFT', 'COMPLETED', 'ARCHIVED'].reduce((acc, s) => {
-    const filtered = challenges.filter(c => filterStatus ? c.status === filterStatus : c.status === s);
-    if (filtered.length) acc[s] = filtered;
-    return acc;
-  }, {});
+  const STATUSES = ['DRAFT', 'ACTIVE', 'UNDER_REVIEW', 'COMPLETED', 'ARCHIVED'];
+  const counts = STATUSES.reduce((a, s) => ({ ...a, [s]: challenges.filter(c => c.status === s).length }), {});
+  const visible = filterStatus ? challenges.filter(c => c.status === filterStatus) : challenges;
+  const chipCls = (active) =>
+    `rounded-full px-3 py-1 font-mono text-[11.5px] font-medium capitalize transition-colors ${
+      active ? 'bg-[#14231B] text-[#F3F1E9]' : 'border border-slate-300 bg-white text-slate-600 hover:border-slate-400'
+    }`;
 
   if (loading) return <PageLoader />;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-2">
-          <select
-            value={filterStatus}
-            onChange={e => setFilterStatus(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-emerald-500"
-          >
-            <option value="">All Statuses</option>
-            {['DRAFT','ACTIVE','UNDER_REVIEW','COMPLETED','ARCHIVED'].map(s => (
-              <option key={s} value={s}>{s.replace('_', ' ')}</option>
-            ))}
-          </select>
-        </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <button onClick={() => setFilterStatus('')} className={chipCls(filterStatus === '')}>
+          all <span className="opacity-70">{challenges.length}</span>
+        </button>
+        {STATUSES.map(s => (
+          <button key={s} onClick={() => setFilterStatus(s)} className={chipCls(filterStatus === s)}>
+            {s.replace('_', ' ').toLowerCase()} <span className="opacity-70">{counts[s]}</span>
+          </button>
+        ))}
+        <div className="flex-1" />
         {isManager && <Button onClick={openCreate}><Plus className="h-4 w-4" /> New Challenge</Button>}
       </div>
 
-      {Object.keys(grouped).length === 0 && <EmptyState icon="🏆" title="No challenges yet" hint="Admins can create challenges to engage employees" />}
+      {visible.length === 0 && <EmptyState icon="🏆" title="No challenges here" hint="Try another filter, or create one." />}
 
-      {Object.entries(grouped).map(([status, items]) => (
-        <div key={status}>
-          <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
-            <StatusBadge status={status} /> <span>{status.replace('_', ' ')}</span>
-            <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs">{items.length}</span>
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map(ch => (
-              <div key={ch.id} className="group flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${DIFFICULTY_COLOR[ch.difficulty]}`}>{ch.difficulty}</span>
-                    <h3 className="mt-2 font-semibold text-slate-800">{ch.title}</h3>
-                    {ch.description && <p className="mt-1 text-sm text-slate-500 line-clamp-2">{ch.description}</p>}
-                  </div>
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-500">
-                  <span className="flex items-center gap-1"><Star className="h-3 w-3 text-amber-400" /> {ch.xp} XP</span>
-                  {ch.deadline && <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {fmtDate(ch.deadline)}</span>}
-                  {ch.category && <span className="rounded-full bg-violet-50 px-2 py-0.5 text-violet-600">{ch.category.name}</span>}
-                  <span>{ch._count?.participations || 0} joined</span>
-                </div>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {ch.status === 'ACTIVE' && user?.role === 'EMPLOYEE' && (
-                    <Button size="sm" onClick={() => handleJoin(ch.id)}>Join</Button>
-                  )}
-                  {isManager && (
-                    <>
-                      <Button size="sm" variant="outline" onClick={() => openEdit(ch)}>Edit</Button>
-                      {ch.status === 'DRAFT' && <Button size="sm" variant="secondary" onClick={() => handleStatusChange(ch.id, 'ACTIVE')}>Activate</Button>}
-                      {ch.status === 'ACTIVE' && <Button size="sm" variant="secondary" onClick={() => handleStatusChange(ch.id, 'UNDER_REVIEW')}>Under Review</Button>}
-                      {ch.status === 'UNDER_REVIEW' && <Button size="sm" variant="secondary" onClick={() => handleStatusChange(ch.id, 'COMPLETED')}>Complete</Button>}
-                      {ch.status !== 'ARCHIVED' && <Button size="sm" variant="ghost" onClick={() => handleStatusChange(ch.id, 'ARCHIVED')}>Archive</Button>}
-                      <Button size="sm" variant="danger" onClick={() => handleDelete(ch.id)}>Delete</Button>
-                    </>
-                  )}
-                </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {visible.map(ch => {
+          const isDraft = ch.status === 'DRAFT';
+          return (
+            <div key={ch.id} className={`flex flex-col gap-2.5 rounded-xl border bg-white p-5 ${isDraft ? 'border-dashed border-slate-300' : 'border-slate-200 shadow-sm'}`}>
+              <div className="flex items-start justify-between gap-2">
+                <h3 className={`font-semibold ${isDraft ? 'text-slate-600' : 'text-slate-800'}`}>{ch.title}</h3>
+                <StatusBadge status={ch.status} />
               </div>
-            ))}
-          </div>
-        </div>
-      ))}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-[12px] font-semibold text-amber-700">+{ch.xp} XP</span>
+                <span className={`rounded-full px-2 py-0.5 font-mono text-[10.5px] font-medium ${DIFFICULTY_COLOR[ch.difficulty]}`}>{ch.difficulty}</span>
+                {ch.deadline && <span className="font-mono text-[11px] text-slate-500">ends {fmtDate(ch.deadline)}</span>}
+                {ch.category && <span className="font-mono text-[11px] text-slate-500">· {ch.category.name}</span>}
+              </div>
+              {ch.description && <p className="line-clamp-2 text-[12.5px] leading-relaxed text-slate-600">{ch.description}</p>}
+              <div className="flex items-center gap-2.5">
+                <div className="h-1.5 flex-1 rounded-full bg-slate-100">
+                  <div className="h-1.5 rounded-full bg-amber-500" style={{ width: `${Math.min(100, (ch._count?.participations || 0) * 12)}%` }} />
+                </div>
+                <span className="font-mono text-[11px] text-slate-500">{ch._count?.participations || 0} in</span>
+              </div>
+              <div className="mt-1 flex flex-wrap gap-2">
+                {ch.status === 'ACTIVE' && user?.role === 'EMPLOYEE' && (
+                  <Button size="sm" className="flex-1" onClick={() => handleJoin(ch.id)}>Join challenge</Button>
+                )}
+                {isManager && (
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => openEdit(ch)}>Edit</Button>
+                    {ch.status === 'DRAFT' && <Button size="sm" variant="secondary" onClick={() => handleStatusChange(ch.id, 'ACTIVE')}>Publish</Button>}
+                    {ch.status === 'ACTIVE' && <Button size="sm" variant="secondary" onClick={() => handleStatusChange(ch.id, 'UNDER_REVIEW')}>Review</Button>}
+                    {ch.status === 'UNDER_REVIEW' && <Button size="sm" variant="secondary" onClick={() => handleStatusChange(ch.id, 'COMPLETED')}>Complete</Button>}
+                    {ch.status !== 'ARCHIVED' && <Button size="sm" variant="ghost" onClick={() => handleStatusChange(ch.id, 'ARCHIVED')}>Archive</Button>}
+                    <Button size="sm" variant="danger" onClick={() => handleDelete(ch.id)}>Del</Button>
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       <Modal open={modal.open} onClose={() => setModal({ open: false, item: null })} title={modal.item ? 'Edit Challenge' : 'New Challenge'} size="lg"
         footer={<><Button variant="outline" onClick={() => setModal({ open: false, item: null })}>Cancel</Button><Button loading={saving} onClick={handleSave}>Save</Button></>}
@@ -411,21 +459,38 @@ function BadgesTab({ user }) {
 
       {badges.length === 0 && <EmptyState icon="🏅" title="No badges yet" />}
 
+      {badges.length > 0 && (
+        <div className="flex items-baseline justify-between">
+          <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-slate-500">Badge gallery · auto-awarded</p>
+          <p className="font-mono text-[11px] text-slate-500">
+            {badges.filter(b => b.employeeBadges?.length > 0).length} of {badges.length} earned
+          </p>
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {badges.map(b => {
           const earned = b.employeeBadges?.length > 0;
+          const skin = badgeSkin(b.name);
           return (
-            <div key={b.id} className={`relative flex flex-col items-center rounded-xl border p-5 text-center transition-all ${earned ? 'border-amber-300 bg-amber-50 shadow-md shadow-amber-100' : 'border-slate-200 bg-white opacity-60'}`}>
-              {earned && <span className="absolute right-2 top-2 text-xs font-semibold text-amber-600">Earned ✓</span>}
-              <span className="text-4xl">{b.icon || '🏅'}</span>
-              <p className="mt-2 font-semibold text-slate-800">{b.name}</p>
-              {b.description && <p className="mt-1 text-xs text-slate-500">{b.description}</p>}
-              <p className="mt-2 text-xs text-slate-400">{b.unlockType === 'XP' ? `${b.unlockThreshold} XP` : `${b.unlockThreshold} Challenges`}</p>
+            <div
+              key={b.id}
+              className={`relative flex flex-col items-center gap-2.5 rounded-xl border p-5 text-center transition-all ${
+                earned ? 'border-slate-200 shadow-sm' : 'border-dashed border-slate-300 bg-slate-50'
+              }`}
+              style={earned ? { background: skin.tint } : undefined}
+            >
+              {earned && <span className="absolute right-2.5 top-2.5 font-mono text-[10px] font-semibold text-emerald-700">EARNED</span>}
+              <BadgeMedal badge={b} earned={earned} />
+              <p className={`font-semibold ${earned ? 'text-slate-800' : 'text-slate-600'}`}>{b.name}</p>
+              <p className="font-mono text-[10.5px] text-slate-500">
+                {earned ? 'unlocked' : 'locked'} · {b.unlockType === 'XP' ? `${b.unlockThreshold} XP` : `${b.unlockThreshold} challenges`}
+              </p>
               {earned && b.employeeBadges?.[0]?.awardedAt && (
-                <p className="mt-1 text-xs text-amber-500">Awarded {fmtDate(b.employeeBadges[0].awardedAt)}</p>
+                <p className="font-mono text-[10px] text-slate-400">awarded {fmtDate(b.employeeBadges[0].awardedAt)}</p>
               )}
               {isManager && (
-                <div className="mt-3 flex gap-2">
+                <div className="mt-1 flex gap-2">
                   <Button size="sm" variant="outline" onClick={() => openEdit(b)}>Edit</Button>
                   <Button size="sm" variant="danger" onClick={() => handleDelete(b.id)}>Del</Button>
                 </div>
@@ -610,6 +675,7 @@ function LeaderboardTab() {
   const [data, setData] = useState({ users: [], departmentRankings: [] });
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState('users');
+  const { user } = useAuthStore();
 
   const load = async () => {
     try {
@@ -644,11 +710,11 @@ function LeaderboardTab() {
       {view === 'users' && (
         <div className="space-y-2">
           {data.users.map((u, i) => (
-            <div key={u.id} className={`flex items-center gap-4 rounded-xl border px-5 py-4 ${i < 3 ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-white'} shadow-sm`}>
+            <div key={u.id} className={`flex items-center gap-4 rounded-xl border px-5 py-4 shadow-sm ${u.id === user?.id ? 'border-amber-300 bg-amber-50 ring-1 ring-amber-200' : i < 3 ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-white'}`}>
               <span className="w-8 text-center text-xl font-bold">{MEDALS[i] || `#${i + 1}`}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-semibold text-slate-800">{u.name}</span>
+                  <span className="font-semibold text-slate-800">{u.name}{u.id === user?.id && <span className="ml-1.5 font-mono text-[10px] text-amber-700">YOU</span>}</span>
                   {u.department && <span className="text-xs text-slate-500">{u.department.name}</span>}
                   <div className="flex gap-1">
                     {u.badges?.map(eb => <span key={eb.badge.name} title={eb.badge.name} className="text-sm">{eb.badge.icon || '🏅'}</span>)}
@@ -697,13 +763,20 @@ export default function GamificationPage() {
   useEffect(() => {
     // Quick stats for header
     Promise.all([
-      challengesAPI.getAll({ all: 'true', status: 'ACTIVE' }),
+      challengesAPI.getAll({ all: 'true' }),
       badgesAPI.getAll({ all: 'true' }),
     ]).then(([cRes, bRes]) => {
       const challenges = cRes.data.data.challenges || [];
       const badges = bRes.data.data.badges || [];
       const earnedBadges = badges.filter(b => b.employeeBadges?.length > 0).length;
-      setStats({ activeChallenges: challenges.length, totalBadges: badges.length, earnedBadges, userXp: user?.xp || 0, userPoints: user?.points || 0 });
+      setStats({
+        activeChallenges: challenges.filter(c => c.status === 'ACTIVE').length,
+        totalChallenges: challenges.length,
+        totalBadges: badges.length,
+        earnedBadges,
+        userXp: user?.xp || 0,
+        userPoints: user?.points || 0,
+      });
     }).catch(() => {});
   }, [user]);
 
@@ -734,21 +807,24 @@ export default function GamificationPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-xl border border-slate-200 bg-slate-50 p-1">
-        {TABS.map(({ key, label, icon: Icon }) => (
-          <button
-            key={key}
-            onClick={() => setActiveTab(key)}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all ${
-              activeTab === key
-                ? 'bg-white text-emerald-700 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700'
-            }`}
-          >
-            <Icon className="h-4 w-4" />
-            <span className="hidden sm:inline">{label}</span>
-          </button>
-        ))}
+      <div className="flex flex-wrap gap-5 border-b border-slate-200">
+        {TABS.map(({ key, label }) => {
+          const count = key === 'challenges' ? stats?.totalChallenges : key === 'badges' ? stats?.totalBadges : undefined;
+          return (
+            <button
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className={`-mb-px flex items-center gap-1.5 border-b-2 px-1 py-2 text-[13px] font-medium transition-colors ${
+                activeTab === key ? 'border-emerald-600 font-semibold text-slate-800' : 'border-transparent text-slate-500 hover:text-slate-700'
+              }`}
+            >
+              {label}
+              {count !== undefined && (
+                <span className={`font-mono text-[11px] ${activeTab === key ? 'text-emerald-600' : 'text-slate-400'}`}>{count}</span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {activeTab === 'challenges' && <ChallengesTab user={user} />}
