@@ -233,7 +233,7 @@ const customReport = async (req, res, next) => {
 
     let rows = [];
 
-    if (!module || module === 'environmental') {
+    if ((!module || module === 'environmental') && !category) {
       const where = {};
       if (department) where.departmentId = department;
       if (Object.keys(dateFilter).length) where.date = dateFilter;
@@ -260,6 +260,7 @@ const customReport = async (req, res, next) => {
     if (!module || module === 'social') {
       const where = {};
       if (employee) where.employeeId = employee;
+      if (category) where.activity = { categoryId: category };
       if (Object.keys(dateFilter).length) where.createdAt = dateFilter;
       const parts = await prisma.employeeParticipation.findMany({
         where,
@@ -282,7 +283,7 @@ const customReport = async (req, res, next) => {
       );
     }
 
-    if (!module || module === 'governance') {
+    if ((!module || module === 'governance') && !category) {
       const issueWhere = {};
       if (Object.keys(dateFilter).length) issueWhere.createdAt = dateFilter;
       const issues = await prisma.complianceIssue.findMany({
@@ -306,6 +307,7 @@ const customReport = async (req, res, next) => {
       const where = {};
       if (employee) where.employeeId = employee;
       if (challenge) where.challengeId = challenge;
+      if (category) where.challenge = { categoryId: category };
       if (Object.keys(dateFilter).length) where.createdAt = dateFilter;
       const participations = await prisma.challengeParticipation.findMany({
         where,

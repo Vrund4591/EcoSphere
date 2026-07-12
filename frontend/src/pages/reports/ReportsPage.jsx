@@ -6,9 +6,9 @@ import {
 import {
   Button, Card, PageHeader, EmptyState
 } from '../../components/ui';
-import { reportsAPI } from '../../services/gamification';
-import { departmentsAPI } from '../../services/api';
-import { downloadCSV } from '../../lib/utils';
+import { reportsAPI, challengesAPI } from '../../services/gamification';
+import { departmentsAPI, usersAPI, categoriesAPI } from '../../services/api';
+import { downloadCSV, downloadExcel, downloadPDF } from '../../lib/utils';
 
 const REPORT_CARDS = [
   {
@@ -193,6 +193,24 @@ function DataTable({ rows }) {
   );
 }
 
+// ─── Export buttons (CSV / Excel / PDF) ──────────────────────────────────────
+function ExportButtons({ rows, name = 'report', title = 'Report' }) {
+  if (!rows?.length) return null;
+  return (
+    <div className="flex gap-1">
+      <Button size="sm" variant="secondary" onClick={() => { downloadCSV(rows, `${name}.csv`); toast.success('CSV downloaded'); }}>
+        <Download className="h-4 w-4" /> CSV
+      </Button>
+      <Button size="sm" variant="secondary" onClick={() => { downloadExcel(rows, `${name}.xlsx`); toast.success('Excel downloaded'); }}>
+        Excel
+      </Button>
+      <Button size="sm" variant="secondary" onClick={() => { downloadPDF(rows, `${name}.pdf`, title); toast.success('PDF downloaded'); }}>
+        PDF
+      </Button>
+    </div>
+  );
+}
+
 // ─── Single Report Card ───────────────────────────────────────────────────────
 function ReportCard({ card, departments }) {
   const [expanded, setExpanded] = useState(false);
@@ -241,9 +259,7 @@ function ReportCard({ card, departments }) {
             <RefreshCw className="h-4 w-4" /> Generate
           </Button>
           {rows.length > 0 && (
-            <Button size="sm" variant="secondary" onClick={handleExport}>
-              <Download className="h-4 w-4" /> CSV
-            </Button>
+            <ExportButtons rows={rows} name={`${card.key}-report`} title={`${card.label} Report`} />
           )}
           {data && (
             <button onClick={() => setExpanded(e => !e)} className="rounded-lg p-1.5 text-slate-400 hover:text-slate-600">
@@ -290,18 +306,24 @@ function ReportCard({ card, departments }) {
 
 // ─── Custom Report Builder ────────────────────────────────────────────────────
 function CustomReportBuilder({ departments }) {
-  const [filters, setFilters] = useState({ module: '', department: '', startDate: '', endDate: '' });
+  const [filters, setFilters] = useState({ module: '', department: '', employee: '', challenge: '', category: '', startDate: '', endDate: '' });
+  const [employees, setEmployees] = useState([]);
+  const [challenges, setChallenges] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState(null);
+
+  useEffect(() => {
+    usersAPI.getAll({ limit: 200 }).then((r) => setEmployees(r.data.data.data || [])).catch(() => {});
+    challengesAPI.getAll({ all: 'true' }).then((r) => setChallenges(r.data.data.challenges || [])).catch(() => {});
+    categoriesAPI.getAll().then((r) => setCategories(r.data.data.categories || [])).catch(() => {});
+  }, []);
 
   const run = async () => {
     setLoading(true);
     try {
       const p = {};
-      if (filters.module) p.module = filters.module;
-      if (filters.department) p.department = filters.department;
-      if (filters.startDate) p.startDate = filters.startDate;
-      if (filters.endDate) p.endDate = filters.endDate;
+      Object.entries(filters).forEach(([k, v]) => { if (v) p[k] = v; });
       const res = await reportsAPI.custom(p);
       setRows(res.data.data.rows || []);
     } catch (e) {
@@ -340,6 +362,30 @@ function CustomReportBuilder({ departments }) {
             <option value="">All Departments</option>
             {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
           </select>
+          <select
+            value={filters.employee}
+            onChange={e => setFilters(f => ({ ...f, employee: e.target.value }))}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 bg-white"
+          >
+            <option value="">All Employees</option>
+            {employees.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+          </select>
+          <select
+            value={filters.challenge}
+            onChange={e => setFilters(f => ({ ...f, challenge: e.target.value }))}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 bg-white"
+          >
+            <option value="">All Challenges</option>
+            {challenges.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+          </select>
+          <select
+            value={filters.category}
+            onChange={e => setFilters(f => ({ ...f, category: e.target.value }))}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 bg-white"
+          >
+            <option value="">All ESG Categories</option>
+            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
           <input
             type="date"
             value={filters.startDate}
@@ -359,11 +405,7 @@ function CustomReportBuilder({ departments }) {
           <Button loading={loading} onClick={run}>
             <Filter className="h-4 w-4" /> Run Report
           </Button>
-          {rows !== null && (
-            <Button variant="secondary" onClick={handleExport}>
-              <Download className="h-4 w-4" /> Export CSV
-            </Button>
-          )}
+          {rows?.length > 0 && <ExportButtons rows={rows} name="custom-report" title="Custom Report" />}
         </div>
         {rows !== null && (
           <div>

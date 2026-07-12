@@ -24,3 +24,32 @@ export function downloadCSV(rows, filename = 'export.csv') {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+/** Download rows as an .xlsx file (lazy-loads SheetJS to keep the main bundle small). */
+export async function downloadExcel(rows, filename = 'export.xlsx') {
+  if (!rows?.length) return;
+  const XLSX = await import('xlsx');
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Report');
+  XLSX.writeFile(wb, filename);
+}
+
+/** Download rows as a PDF table (lazy-loads jsPDF + autotable). */
+export async function downloadPDF(rows, filename = 'export.pdf', title = 'Report') {
+  if (!rows?.length) return;
+  const { default: jsPDF } = await import('jspdf');
+  const autoTable = (await import('jspdf-autotable')).default;
+  const doc = new jsPDF({ orientation: 'landscape' });
+  const headers = Object.keys(rows[0]);
+  doc.setFontSize(14);
+  doc.text(title, 14, 16);
+  autoTable(doc, {
+    head: [headers.map((h) => h.replace(/([A-Z])/g, ' $1').trim())],
+    body: rows.map((r) => headers.map((h) => (r[h] == null ? '' : String(r[h])))),
+    startY: 22,
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [5, 150, 105] },
+  });
+  doc.save(filename);
+}
