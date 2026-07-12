@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { Cloud, Trophy, AlertTriangle, Clock, Users, Award, RefreshCw } from 'lucide-react';
+import { Cloud, Trophy, AlertTriangle, Clock, Users, Award, RefreshCw, CheckCircle2 } from 'lucide-react';
+
+const ACT_ICON = { CARBON: Cloud, ISSUE: AlertTriangle, CSR: CheckCircle2, BADGE: Award };
 import toast from 'react-hot-toast';
 import { dashboardAPI } from '../services/api';
 import { Card, StatCard, PageHeader, PageLoader, Button } from '../components/ui';
@@ -179,7 +181,7 @@ export default function DashboardPage() {
           }
         >
           {attention.length === 0 ? (
-            <p className="py-6 text-center text-sm text-slate-400">All clear ✦</p>
+            <p className="py-6 text-center text-sm text-slate-400">All clear</p>
           ) : (
             <div className="space-y-3.5">
               {attention.map((a, i) => (
@@ -203,12 +205,15 @@ export default function DashboardPage() {
             <p className="py-6 text-center text-sm text-slate-400">No recent activity</p>
           ) : (
             <div className="space-y-3.5">
-              {recentActivity.map((a, i) => (
-                <div key={i} className="flex items-start gap-2.5">
-                  <span className="text-base leading-none">{a.icon}</span>
-                  <span className="flex-1 text-[12.5px] leading-snug text-slate-600">{a.text}</span>
-                </div>
-              ))}
+              {recentActivity.map((a, i) => {
+                const I = ACT_ICON[a.type] || Award;
+                return (
+                  <div key={i} className="flex items-start gap-2.5">
+                    <I className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-400" />
+                    <span className="flex-1 text-[12.5px] leading-snug text-slate-600">{a.text}</span>
+                  </div>
+                );
+              })}
             </div>
           )}
         </Card>

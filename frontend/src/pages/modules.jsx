@@ -1,3 +1,4 @@
+import { Compass } from 'lucide-react';
 import ModulePlaceholder from './ModulePlaceholder';
 import ActualEnvironmentalPage from './environmental/EnvironmentalPage';
 import ActualSocialPage from './social/SocialPage';
@@ -28,8 +29,8 @@ export function ReportsPage() {
 export function NotFoundPage() {
   return (
     <div className="flex h-[60vh] flex-col items-center justify-center text-center">
-      <span className="text-5xl">🌵</span>
-      <h1 className="mt-3 text-2xl font-bold text-slate-800">Page not found</h1>
+      <Compass className="h-12 w-12 text-slate-300" />
+      <h1 className="mt-3 font-serif text-2xl font-medium text-slate-800">Page not found</h1>
       <a href="/dashboard" className="mt-3 text-emerald-600 hover:underline">
         Back to dashboard
       </a>

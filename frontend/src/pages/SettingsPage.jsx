@@ -540,7 +540,7 @@ export default function SettingsPage() {
   const [tab, setTab] = useState('Users');
   return (
     <div>
-      <PageHeader title="⚙ Settings" subtitle="Configuration & administration" />
+      <PageHeader title="Settings" subtitle="Configuration & administration" />
       <div className="mb-5 flex flex-wrap gap-2 border-b border-slate-200">
         {TABS.map((t) => (
           <button

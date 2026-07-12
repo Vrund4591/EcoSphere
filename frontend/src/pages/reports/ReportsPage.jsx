@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import {
-  Filter, Download, RefreshCw, ChevronDown, ChevronUp
+  Filter, Download, RefreshCw, ChevronDown, ChevronUp,
+  Leaf, Users, ShieldCheck, BarChart3,
 } from 'lucide-react';
 import {
   Button, Card, PageHeader, EmptyState
@@ -14,7 +15,7 @@ const REPORT_CARDS = [
   {
     key: 'environmental',
     label: 'Environmental',
-    emoji: '🌿',
+    icon: Leaf,
     accent: 'bg-emerald-50 border-emerald-200',
     iconColor: 'text-emerald-600',
     description: 'Carbon transactions, emission factors, environmental goals',
@@ -32,7 +33,7 @@ const REPORT_CARDS = [
   {
     key: 'social',
     label: 'Social',
-    emoji: '👥',
+    icon: Users,
     accent: 'bg-sky-50 border-sky-200',
     iconColor: 'text-sky-600',
     description: 'CSR activities, employee participations',
@@ -49,7 +50,7 @@ const REPORT_CARDS = [
   {
     key: 'governance',
     label: 'Governance',
-    emoji: '🏛',
+    icon: ShieldCheck,
     accent: 'bg-violet-50 border-violet-200',
     iconColor: 'text-violet-600',
     description: 'ESG policies, audits, compliance issues',
@@ -66,7 +67,7 @@ const REPORT_CARDS = [
   {
     key: 'summary',
     label: 'ESG Summary',
-    emoji: '📊',
+    icon: BarChart3,
     accent: 'bg-amber-50 border-amber-200',
     iconColor: 'text-amber-600',
     description: 'Cross-module ESG overview and top performers',
@@ -163,7 +164,7 @@ function SummaryPanel({ reportKey, data }) {
 
 // Generic table renderer
 function DataTable({ rows }) {
-  if (!rows?.length) return <EmptyState icon="📭" title="No data for the selected filters" />;
+  if (!rows?.length) return <EmptyState title="No data for the selected filters" />;
   const headers = Object.keys(rows[0]);
   return (
     <div className="overflow-x-auto rounded-lg border border-slate-200">
@@ -248,7 +249,7 @@ function ReportCard({ card, departments }) {
     <div className={`rounded-xl border ${card.accent} p-5`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">{card.emoji}</span>
+          <card.icon className={`h-6 w-6 ${card.iconColor}`} />
           <div>
             <h3 className="font-semibold text-slate-800">{card.label} Report</h3>
             <p className="text-xs text-slate-500">{card.description}</p>
@@ -340,7 +341,7 @@ function CustomReportBuilder({ departments }) {
   };
 
   return (
-    <Card title="🔧 Custom Report Builder">
+    <Card title="Custom Report Builder">
       <div className="space-y-4">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <select
@@ -433,7 +434,7 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="📈 Reports"
+        title="Reports"
         subtitle="Generate, analyze and export ESG reports across all modules"
       />
 

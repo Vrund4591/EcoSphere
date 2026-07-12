@@ -92,7 +92,7 @@ export default function EnvironmentalPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="🌱 Environmental Management"
+        title="Environmental"
         subtitle="Track carbon transactions, manage emission factors, monitor ESG goals, and manage product profiles."
       />
 

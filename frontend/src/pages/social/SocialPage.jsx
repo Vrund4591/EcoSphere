@@ -635,7 +635,7 @@ export default function SocialPage() {
 
   return (
     <div>
-      <PageHeader title="🤝 Social" subtitle="CSR activities, participation & diversity" />
+      <PageHeader title="Social" subtitle="CSR activities, participation & diversity" />
       <div className="mb-5 flex flex-wrap gap-2 border-b border-slate-200">
         {TABS.map((t) => (
           <button

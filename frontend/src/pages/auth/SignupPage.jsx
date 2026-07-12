@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../store/authStore';
+import { Sprout } from 'lucide-react';
 import { Button, Input, Select } from '../../components/ui';
 
 export default function SignupPage() {
@@ -24,7 +25,7 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-8">
       <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <div className="mb-6 text-center">
-          <span className="text-3xl">🌱</span>
+          <Sprout className="mx-auto h-8 w-8 text-emerald-600" />
           <h2 className="mt-2 text-2xl font-bold text-slate-800">Join EcoSphere</h2>
           <p className="mt-1 text-sm text-slate-500">Create your employee account</p>
         </div>

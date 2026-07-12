@@ -605,7 +605,7 @@ export default function GovernancePage() {
   const [tab, setTab] = useState('Policies');
   return (
     <div>
-      <PageHeader title="🏛 Governance" subtitle="Policies, audits & compliance management" />
+      <PageHeader title="Governance" subtitle="Policies, audits & compliance management" />
       <div className="mb-5 flex flex-wrap gap-2 border-b border-slate-200">
         {TABS.map((t) => (
           <button

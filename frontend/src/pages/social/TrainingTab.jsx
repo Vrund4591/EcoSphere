@@ -56,7 +56,7 @@ export default function TrainingTab() {
   const markComplete = async (id) => {
     try {
       await trainingsAPI.complete(id);
-      toast.success('Marked complete 🎓');
+      toast.success('Marked complete');
       load();
     } catch (e) {
       toast.error(e.response?.data?.message || 'Failed');
@@ -76,7 +76,7 @@ export default function TrainingTab() {
       )}
     >
       {rows.length === 0 ? (
-        <EmptyState icon="🎓" title="No trainings yet" />
+        <EmptyState title="No trainings yet" />
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">

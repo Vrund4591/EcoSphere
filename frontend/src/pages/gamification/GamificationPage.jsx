@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-hot-toast';
 import {
   Trophy, Star, Gift, Users, Zap, Shield, Clock, CheckCircle2,
-  XCircle, Plus, ChevronRight, Award, TrendingUp, Filter
+  XCircle, Plus, ChevronRight, Award, TrendingUp, Filter,
+  Sprout, Recycle, Globe2, Leaf, Lock,
 } from 'lucide-react';
 import {
   Button, Card, Badge, Modal, Input, Select, Textarea, PageLoader,
@@ -51,6 +52,17 @@ function badgeSkin(name = '') {
 }
 const HEX_POINTS = '28,3 51,16 51,40 28,53 5,40 5,16';
 
+// Pick a lucide icon for a badge from keywords in its name.
+function badgeIcon(name = '') {
+  const n = name.toLowerCase();
+  if (n.includes('beginner') || n.includes('green') || n.includes('start') || n.includes('seed')) return Sprout;
+  if (n.includes('carbon') || n.includes('recycle') || n.includes('waste') || n.includes('saver')) return Recycle;
+  if (n.includes('champion') || n.includes('sustain') || n.includes('planet') || n.includes('earth') || n.includes('world')) return Globe2;
+  if (n.includes('team') || n.includes('player') || n.includes('community')) return Users;
+  if (n.includes('eco') || n.includes('leaf') || n.includes('nature')) return Leaf;
+  return Award;
+}
+
 // A unique hexagonal crest per badge — colored by a hash of its name, greyed + dashed when locked.
 export function BadgeMedal({ badge, earned, size = 56 }) {
   const skin = badgeSkin(badge.name);
@@ -72,15 +84,15 @@ export function BadgeMedal({ badge, earned, size = 56 }) {
           strokeDasharray={earned ? '0' : '3 3'}
         />
       </svg>
-      <div
-        className="absolute inset-0 flex items-center justify-center"
-        style={{ fontSize: size * 0.42, filter: earned ? 'none' : 'grayscale(1)', opacity: earned ? 1 : 0.5 }}
-      >
-        {badge.icon || '🏅'}
+      <div className="absolute inset-0 flex items-center justify-center">
+        {(() => {
+          const Icon = badgeIcon(badge.name);
+          return <Icon size={Math.round(size * 0.4)} color={earned ? '#FFFFFF' : '#8C968E'} strokeWidth={2} />;
+        })()}
       </div>
       {!earned && (
-        <div className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[9px] shadow">
-          🔒
+        <div className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full border border-slate-200 bg-white shadow">
+          <Lock className="h-2.5 w-2.5 text-slate-500" />
         </div>
       )}
     </div>
@@ -218,7 +230,7 @@ function ChallengesTab({ user }) {
         {isManager && <Button onClick={openCreate}><Plus className="h-4 w-4" /> New Challenge</Button>}
       </div>
 
-      {visible.length === 0 && <EmptyState icon="🏆" title="No challenges here" hint="Try another filter, or create one." />}
+      {visible.length === 0 && <EmptyState title="No challenges here" hint="Try another filter, or create one." />}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {visible.map(ch => {
@@ -322,7 +334,7 @@ function ParticipationTab({ user }) {
   const handleApprove = async (id) => {
     try {
       await challengeParticipationsAPI.approve(id);
-      toast.success('Approved! XP awarded 🎉');
+      toast.success('Approved — XP awarded');
       load();
     } catch (e) {
       toast.error(e.response?.data?.message || 'Failed to approve');
@@ -356,7 +368,7 @@ function ParticipationTab({ user }) {
         </select>
       </div>
 
-      {participations.length === 0 && <EmptyState icon="✅" title="No participations found" />}
+      {participations.length === 0 && <EmptyState title="No participations found" />}
 
       <div className="space-y-3">
         {participations.map(p => (
@@ -417,12 +429,12 @@ function BadgesTab({ user }) {
   useEffect(() => { load(); }, []);
 
   const openCreate = () => {
-    setForm({ name: '', description: '', icon: '🏅', unlockType: 'XP', unlockThreshold: 100, status: 'ACTIVE' });
+    setForm({ name: '', description: '', icon: '', unlockType: 'XP', unlockThreshold: 100, status: 'ACTIVE' });
     setModal({ open: true, item: null });
   };
 
   const openEdit = (item) => {
-    setForm({ name: item.name, description: item.description || '', icon: item.icon || '🏅', unlockType: item.unlockType, unlockThreshold: item.unlockThreshold, status: item.status });
+    setForm({ name: item.name, description: item.description || '', icon: item.icon || '', unlockType: item.unlockType, unlockThreshold: item.unlockThreshold, status: item.status });
     setModal({ open: true, item });
   };
 
@@ -457,7 +469,7 @@ function BadgesTab({ user }) {
         </div>
       )}
 
-      {badges.length === 0 && <EmptyState icon="🏅" title="No badges yet" />}
+      {badges.length === 0 && <EmptyState title="No badges yet" />}
 
       {badges.length > 0 && (
         <div className="flex items-baseline justify-between">
@@ -509,7 +521,7 @@ function BadgesTab({ user }) {
             <label className="mb-1 block text-sm font-medium text-slate-700">Description</label>
             <textarea className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-emerald-500" rows={2} value={form.description || ''} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} />
           </div>
-          <Input label="Icon (emoji)" value={form.icon || ''} onChange={e => setForm(f => ({ ...f, icon: e.target.value }))} />
+          <p className="font-mono text-[11px] text-slate-500">The badge crest icon is chosen automatically from the name.</p>
           <div className="grid grid-cols-2 gap-4">
             <Select label="Unlock Type" value={form.unlockType || 'XP'} onChange={e => setForm(f => ({ ...f, unlockType: e.target.value }))}>
               <option value="XP">XP Threshold</option>
@@ -590,7 +602,7 @@ function RewardsTab({ user }) {
     try {
       await rewardsAPI.redeem(reward.id);
       setUserPoints(p => p - reward.pointsRequired);
-      toast.success(`Redeemed "${reward.name}" 🎁`);
+      toast.success(`Redeemed "${reward.name}"`);
       load();
     } catch (e) {
       toast.error(e.response?.data?.message || 'Failed to redeem');
@@ -611,7 +623,7 @@ function RewardsTab({ user }) {
         {isManager && <Button onClick={openCreate}><Plus className="h-4 w-4" /> New Reward</Button>}
       </div>
 
-      {rewards.length === 0 && <EmptyState icon="🎁" title="No rewards yet" hint="Admins can add rewards to the catalog" />}
+      {rewards.length === 0 && <EmptyState title="No rewards yet" hint="Admins can add rewards to the catalog" />}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {rewards.map(r => (
@@ -693,8 +705,7 @@ function LeaderboardTab() {
 
   if (loading) return <PageLoader />;
 
-  const RANK_STYLES = ['text-amber-500', 'text-slate-400', 'text-amber-700'];
-  const MEDALS = ['🥇', '🥈', '🥉'];
+  const RANK_STYLES = ['text-amber-600', 'text-slate-500', 'text-amber-700'];
 
   return (
     <div className="space-y-4">
@@ -711,14 +722,17 @@ function LeaderboardTab() {
         <div className="space-y-2">
           {data.users.map((u, i) => (
             <div key={u.id} className={`flex items-center gap-4 rounded-xl border px-5 py-4 shadow-sm ${u.id === user?.id ? 'border-amber-300 bg-amber-50 ring-1 ring-amber-200' : i < 3 ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-white'}`}>
-              <span className="w-8 text-center text-xl font-bold">{MEDALS[i] || `#${i + 1}`}</span>
+              <span className={`w-8 text-center font-mono text-lg font-bold ${RANK_STYLES[i] || 'text-slate-400'}`}>{i + 1}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-semibold text-slate-800">{u.name}{u.id === user?.id && <span className="ml-1.5 font-mono text-[10px] text-amber-700">YOU</span>}</span>
                   {u.department && <span className="text-xs text-slate-500">{u.department.name}</span>}
-                  <div className="flex gap-1">
-                    {u.badges?.map(eb => <span key={eb.badge.name} title={eb.badge.name} className="text-sm">{eb.badge.icon || '🏅'}</span>)}
-                  </div>
+                  {u.badges?.length > 0 && (
+                    <span className="flex items-center gap-0.5 text-slate-400" title={`${u.badges.length} badges`}>
+                      <Award className="h-3.5 w-3.5" />
+                      <span className="font-mono text-[10px]">{u.badges.length}</span>
+                    </span>
+                  )}
                 </div>
                 <ScoreBar value={Math.min(100, (u.xp / Math.max(...data.users.map(x => x.xp), 1)) * 100)} />
               </div>
@@ -728,7 +742,7 @@ function LeaderboardTab() {
               </div>
             </div>
           ))}
-          {data.users.length === 0 && <EmptyState icon="🏆" title="No leaderboard data yet" />}
+          {data.users.length === 0 && <EmptyState title="No leaderboard data yet" />}
         </div>
       )}
 
@@ -736,7 +750,7 @@ function LeaderboardTab() {
         <div className="space-y-2">
           {data.departmentRankings.map((d, i) => (
             <div key={d.id} className={`flex items-center gap-4 rounded-xl border px-5 py-4 ${i < 3 ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-white'} shadow-sm`}>
-              <span className="w-8 text-center text-xl font-bold">{MEDALS[i] || `#${i + 1}`}</span>
+              <span className={`w-8 text-center font-mono text-lg font-bold ${RANK_STYLES[i] || 'text-slate-400'}`}>{i + 1}</span>
               <div className="flex-1">
                 <p className="font-semibold text-slate-800">{d.name}</p>
                 <p className="text-xs text-slate-500">{d.memberCount} members</p>
@@ -747,7 +761,7 @@ function LeaderboardTab() {
               </div>
             </div>
           ))}
-          {data.departmentRankings.length === 0 && <EmptyState icon="🏢" title="No departments yet" />}
+          {data.departmentRankings.length === 0 && <EmptyState title="No departments yet" />}
         </div>
       )}
     </div>
@@ -783,15 +797,17 @@ export default function GamificationPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="🏆 Gamification"
+        title="Gamification"
         subtitle="Challenges, badges, rewards & leaderboard"
         actions={stats && (
           <div className="flex gap-3">
-            <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-1.5 text-sm">
-              <span className="text-amber-600 font-semibold">⚡ {stats.userXp} XP</span>
+            <div className="flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm">
+              <Zap className="h-4 w-4 text-amber-600" />
+              <span className="font-mono font-semibold text-amber-700">{stats.userXp} XP</span>
             </div>
-            <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-sm">
-              <span className="text-emerald-600 font-semibold">⭐ {stats.userPoints} pts</span>
+            <div className="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-sm">
+              <Star className="h-4 w-4 text-emerald-600" />
+              <span className="font-mono font-semibold text-emerald-700">{stats.userPoints} pts</span>
             </div>
           </div>
         )}

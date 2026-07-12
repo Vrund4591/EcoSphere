@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Loader2, X } from 'lucide-react';
+import { Loader2, X, Inbox } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { STATUS_COLORS } from '../../config/constants';
 
@@ -137,10 +137,12 @@ export function PageLoader() {
     </div>
   );
 }
-export function EmptyState({ icon, title = 'Nothing here yet', hint }) {
+export function EmptyState({ title = 'Nothing here yet', hint }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="mb-2 text-4xl">{icon || '🌱'}</div>
+      <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-400">
+        <Inbox className="h-5 w-5" />
+      </div>
       <p className="font-medium text-slate-700">{title}</p>
       {hint && <p className="mt-1 text-sm text-slate-400">{hint}</p>}
     </div>
