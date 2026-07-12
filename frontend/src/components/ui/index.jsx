@@ -6,7 +6,7 @@ import { STATUS_COLORS } from '../../config/constants';
 /* ---------------- Button ---------------- */
 const BTN = {
   primary: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm',
-  secondary: 'bg-slate-100 text-slate-700 hover:bg-slate-200',
+  secondary: 'bg-white border border-slate-300 text-slate-700 hover:border-slate-400',
   outline: 'border border-slate-300 text-slate-700 hover:bg-slate-50',
   ghost: 'text-slate-600 hover:bg-slate-100',
   danger: 'bg-rose-600 text-white hover:bg-rose-700',
@@ -86,7 +86,7 @@ export function Badge({ status, children, className }) {
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex items-center rounded-full px-2.5 py-0.5 font-mono text-[11px] font-medium',
         STATUS_COLORS[key] || 'bg-slate-100 text-slate-600',
         className
       )}
@@ -159,7 +159,7 @@ export function StatCard({ label, value, sub, icon, accent = 'emerald' }) {
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm text-slate-500">{label}</p>
-          <p className="mt-1 text-2xl font-bold text-slate-800">{value}</p>
+          <p className="mt-1 font-mono text-2xl font-semibold text-slate-800">{value}</p>
           {sub && <p className="mt-1 text-xs text-slate-400">{sub}</p>}
         </div>
         {icon && <div className={cn('rounded-lg p-2', ACCENTS[accent] || ACCENTS.emerald)}>{icon}</div>}
@@ -171,7 +171,7 @@ export function PageHeader({ title, subtitle, actions }) {
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">{title}</h1>
+        <h1 className="font-serif text-[26px] font-medium text-slate-800">{title}</h1>
         {subtitle && <p className="mt-0.5 text-sm text-slate-500">{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}

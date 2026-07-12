@@ -7,9 +7,10 @@ export const ROLE_LABELS = {
   EMPLOYEE: 'Employee',
 };
 
-// Brand palette (emerald / sustainability green)
-export const BRAND = '#059669';
-export const CHART_COLORS = ['#059669', '#0ea5e9', '#f59e0b', '#8b5cf6', '#ef4444', '#14b8a6'];
+// Brand palette (editorial redesign — forest green + ESG-pillar accents)
+export const BRAND = '#2C5E43';
+// Environmental=green, Social=blue, Governance=purple, Gamification/XP=gold, +mint, +rust
+export const CHART_COLORS = ['#3E7C57', '#4E71A8', '#7A64AE', '#C99A45', '#5EA97E', '#96422D'];
 
 export const STATUS_COLORS = {
   ACTIVE: 'bg-emerald-100 text-emerald-700',

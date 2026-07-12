@@ -1,4 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
+
+/*
+  EcoSphere editorial redesign.
+  We remap Tailwind's built-in color ramps to the design palette so the whole app
+  (including every module page) adopts the look without per-file edits:
+    emerald -> forest green (primary)
+    slate   -> warm paper grays
+    amber   -> gold        rose/red -> rust
+    sky/blue-> dusty blue  violet   -> muted purple
+*/
+@theme {
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Newsreader', ui-serif, Georgia, serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Forest green (primary) */
+  --color-emerald-50: #e3eee6;
+  --color-emerald-100: #cfe0d2;
+  --color-emerald-200: #a9c3ae;
+  --color-emerald-300: #83ae90;
+  --color-emerald-400: #5ea97e;
+  --color-emerald-500: #3e7c57;
+  --color-emerald-600: #2c5e43;
+  --color-emerald-700: #1f4530;
+  --color-emerald-800: #14231b;
+  --color-emerald-900: #0f1a14;
+  --color-green-50: #e3eee6;
+  --color-green-100: #cfe0d2;
+  --color-green-500: #3e7c57;
+  --color-green-600: #2c5e43;
+  --color-green-700: #1f4530;
+
+  /* Warm paper grays */
+  --color-slate-50: #f6f5f1;
+  --color-slate-100: #f1f0ea;
+  --color-slate-200: #e4e2d8;
+  --color-slate-300: #d5d2c6;
+  --color-slate-400: #a7aea4;
+  --color-slate-500: #8c968e;
+  --color-slate-600: #5e6a62;
+  --color-slate-700: #3a463f;
+  --color-slate-800: #182420;
+  --color-slate-900: #14231b;
+  --color-gray-50: #f6f5f1;
+  --color-gray-100: #f1f0ea;
+  --color-gray-200: #e4e2d8;
+  --color-gray-500: #8c968e;
+  --color-gray-700: #3a463f;
+
+  /* Gold */
+  --color-amber-50: #f7efdd;
+  --color-amber-100: #f4ecda;
+  --color-amber-200: #e9d6a9;
+  --color-amber-500: #c99a45;
+  --color-amber-600: #b58734;
+  --color-amber-700: #8f6a24;
+
+  /* Rust (rose + red) */
+  --color-rose-50: #f7e7e1;
+  --color-rose-100: #f4e2dc;
+  --color-rose-500: #b4553b;
+  --color-rose-600: #96422d;
+  --color-rose-700: #7c3626;
+  --color-red-50: #f7e7e1;
+  --color-red-100: #f4e2dc;
+  --color-red-500: #b4553b;
+  --color-red-600: #96422d;
+  --color-red-700: #7c3626;
+
+  /* Burnt orange (HIGH severity) */
+  --color-orange-50: #f6e8dd;
+  --color-orange-100: #f1dec9;
+  --color-orange-600: #b06a2f;
+  --color-orange-700: #9a5a24;
+
+  /* Dusty blue (sky + blue) */
+  --color-sky-50: #e7ecf4;
+  --color-sky-100: #dce4f1;
+  --color-sky-500: #4e71a8;
+  --color-sky-600: #3e5c8c;
+  --color-sky-700: #35507c;
+  --color-blue-50: #e7ecf4;
+  --color-blue-100: #dce4f1;
+  --color-blue-500: #4e71a8;
+  --color-blue-600: #3e5c8c;
+  --color-blue-700: #35507c;
+
+  /* Muted purple (violet) */
+  --color-violet-50: #ece7f3;
+  --color-violet-100: #e4dcf0;
+  --color-violet-500: #7a64ae;
+  --color-violet-600: #6a5499;
+  --color-violet-700: #5b4785;
+  --color-teal-500: #5ea97e;
+  --color-teal-600: #3e7c57;
+}
 
 :root {
   color-scheme: light;
@@ -12,20 +109,24 @@ body,
 
 body {
   margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: #f8fafc;
-  color: #0f172a;
+  font-family: var(--font-sans);
+  background: #eae8e0;
+  color: #182420;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* subtle scrollbar */
+/* warm scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d5d2c6;
   border-radius: 6px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #b7b3a5;
+}
+::selection {
+  background: #cfe0d2;
 }
