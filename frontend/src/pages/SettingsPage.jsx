@@ -98,7 +98,7 @@ function Departments() {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-100 text-left text-slate-500">
+            <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
               <th className="py-2 pr-4">Name</th>
               <th className="py-2 pr-4">Code</th>
               <th className="py-2 pr-4">Head</th>
@@ -225,7 +225,7 @@ function Categories() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-left text-slate-500">
+              <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
                 <th className="py-2 pr-4">Name</th>
                 <th className="py-2 pr-4">Type</th>
                 <th className="py-2 pr-4">Status</th>
@@ -439,7 +439,7 @@ function UsersAdmin() {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-100 text-left text-slate-500">
+            <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
               <th className="py-2 pr-4">Name</th>
               <th className="py-2 pr-4">Email</th>
               <th className="py-2 pr-4">Role</th>

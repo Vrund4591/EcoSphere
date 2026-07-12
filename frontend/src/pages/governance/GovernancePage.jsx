@@ -104,7 +104,7 @@ function Policies() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-left text-slate-500">
+              <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
                 <th className="py-2 pr-4">Title</th>
                 <th className="py-2 pr-4">Pillar</th>
                 <th className="py-2 pr-4">Version</th>
@@ -230,7 +230,7 @@ function Acknowledgements() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-left text-slate-500">
+              <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
                 <th className="py-2 pr-4">Policy</th>
                 <th className="py-2 pr-4">Employee</th>
                 <th className="py-2 pr-4">Status</th>
@@ -340,7 +340,7 @@ function Audits() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-left text-slate-500">
+              <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
                 <th className="py-2 pr-4">Title</th>
                 <th className="py-2 pr-4">Auditor</th>
                 <th className="py-2 pr-4">Date</th>
@@ -505,7 +505,7 @@ function ComplianceIssues() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 text-left text-slate-500">
+              <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
                 <th className="py-2 pr-4">Title</th>
                 <th className="py-2 pr-4">Severity</th>
                 <th className="py-2 pr-4">Owner</th>

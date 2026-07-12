@@ -39,19 +39,28 @@ export default function EnvironmentalPage() {
     factorCount: 0,
     avgGoalProgress: 0,
   });
+  const [counts, setCounts] = useState({});
 
   // Load overall metrics for the environmental dashboard
   const loadKpis = async () => {
     try {
-      const [factorsRes, txnsRes, goalsRes] = await Promise.all([
+      const [factorsRes, txnsRes, goalsRes, profRes] = await Promise.all([
         emissionFactorsAPI.getAll({ all: 'true' }),
         carbonTransactionsAPI.getAll({ all: 'true' }),
         environmentalGoalsAPI.getAll({ all: 'true' }),
+        productProfilesAPI.getAll({ all: 'true' }),
       ]);
 
       const factors = factorsRes.data.data.emissionFactors || [];
       const txns = txnsRes.data.data.transactions || [];
       const goals = goalsRes.data.data.goals || [];
+      const profiles = profRes.data.data.profiles || [];
+      setCounts({
+        'Emission Factors': factors.length,
+        'Carbon Transactions': txns.length,
+        'Environmental Goals': goals.length,
+        'Product ESG Profiles': profiles.length,
+      });
 
       const totalEmissions = txns.reduce((sum, t) => sum + (t.co2Amount || 0), 0);
       const activeGoals = goals.filter(g => g.status === 'ACTIVE' || g.status === 'ON_TRACK').length;
@@ -127,10 +136,15 @@ export default function EnvironmentalPage() {
             onClick={() => setTab(t)}
             className={cn(
               '-mb-px border-b-2 px-3 py-2 text-sm font-medium transition-colors',
-              tab === t ? 'border-emerald-500 text-emerald-700 font-semibold' : 'border-transparent text-slate-500 hover:text-slate-700'
+              tab === t ? 'border-emerald-600 font-semibold text-slate-800' : 'border-transparent text-slate-500 hover:text-slate-700'
             )}
           >
             {t}
+            {counts[t] !== undefined && (
+              <span className={cn('ml-1.5 font-mono text-[11px]', tab === t ? 'text-emerald-600' : 'text-slate-400')}>
+                {counts[t].toLocaleString()}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -238,7 +252,7 @@ function EmissionFactorsTab({ canEdit }) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-slate-500">
+                <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
                   <th className="py-2 pr-4 font-semibold">Name</th>
                   <th className="py-2 pr-4 font-semibold">Source</th>
                   <th className="py-2 pr-4 font-semibold">Unit</th>
@@ -534,7 +548,7 @@ function CarbonTransactionsTab({ canEdit }) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-slate-500 font-semibold">
+                <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
                   <th className="py-2 pr-4">Date</th>
                   <th className="py-2 pr-4">Source</th>
                   <th className="py-2 pr-4">Department</th>
@@ -1016,7 +1030,7 @@ function ProductProfilesTab({ canEdit }) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-slate-500 font-semibold">
+                <tr className="border-b border-slate-200 bg-slate-50 text-left font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-slate-500">
                   <th className="py-2 pr-4">Product Name</th>
                   <th className="py-2 pr-4">Category</th>
                   <th className="py-2 pr-4">Carbon Footprint</th>
