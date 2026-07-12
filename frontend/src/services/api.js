@@ -71,3 +71,10 @@ export const dashboardAPI = {
 // TEAMMATES: add your module API objects below (append-only).
 //   e.g. export const emissionFactorsAPI = { getAll: (p) => api.get('/emission-factors', { params: p }), ... }
 // ============================================================
+
+export {
+  emissionFactorsAPI,
+  carbonTransactionsAPI,
+  environmentalGoalsAPI,
+  productProfilesAPI,
+} from './environmental';
