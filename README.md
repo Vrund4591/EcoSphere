@@ -53,12 +53,19 @@ npm install
 npm run dev                   # http://localhost:5173
 ```
 
+## Docs (read before coding — esp. for AI agents / Antigravity)
+- **[AGENTS.md](AGENTS.md)** — quick agent context + non-negotiable rules
+- **[docs/AI_ONBOARDING.md](docs/AI_ONBOARDING.md)** — full architecture, conventions, data model, and a copy-paste recipe for adding a feature
+- **Per-person tasks:** [Prince](docs/tasks/PRINCE.md) · [Tirth](docs/tasks/TIRTH.md) · [Samarth](docs/tasks/SAMARTH.md)
+
 ## Team
 | Member | Area |
 |---|---|
-| Lead | Platform: auth/RBAC, schema, settings, scoring, dashboard |
-| P2 | Environmental |
-| P3 | Social + Governance |
-| P4 | Gamification + Reports |
+| **Vrund** (Lead) | Platform: auth/RBAC, schema, settings, scoring, dashboard, integration |
+| **Prince** | Environmental |
+| **Tirth** | Social + Governance |
+| **Samarth** | Gamification + Reports |
+
+Everyone commits their **own** code to `main` at least **once per hour** (contribution is scored per author).
 
 _Built for Odoo Hackathon '26._
