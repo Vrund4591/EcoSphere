@@ -16,9 +16,12 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response?.status === 401) {
+      // Full auth reset — clear BOTH the token and the persisted Zustand store,
+      // otherwise a stale `isAuthenticated: true` bounces /login -> /dashboard forever.
       localStorage.removeItem('token');
+      localStorage.removeItem('ecosphere-auth');
       if (!window.location.pathname.startsWith('/login')) {
-        window.location.href = '/login';
+        window.location.replace('/login');
       }
     }
     return Promise.reject(err);

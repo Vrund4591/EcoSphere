@@ -1,7 +1,16 @@
 const ApiError = require('../utils/ApiError');
 
 const errorHandler = (err, req, res, next) => {
-  if (process.env.NODE_ENV === 'development') console.error('Error:', err);
+  // Concise logging: expected client errors (401/403/404/400) get a single line;
+  // unexpected / server errors get a full stack. Prevents 401 auth floods in the console.
+  const status = err.statusCode || 500;
+  if (err instanceof ApiError && status < 500) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`${status} ${req.method} ${req.originalUrl} — ${err.message}`);
+    }
+  } else if (process.env.NODE_ENV === 'development') {
+    console.error('Error:', err);
+  }
 
   // Prisma known errors
   if (err.code === 'P2002') {
