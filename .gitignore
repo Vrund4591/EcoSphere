@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# env
+.env
+.env.local
+**/.env
+!**/.env.example
+
+# build
+dist/
+build/
+**/dist/
+**/build/
+
+# prisma
+**/prisma/generated/
+
+# misc
+*.log
+.DS_Store
+coverage/
+.vite/
