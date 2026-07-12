@@ -1,5 +1,7 @@
 import ModulePlaceholder from './ModulePlaceholder';
 import ActualEnvironmentalPage from './environmental/EnvironmentalPage';
+import ActualGamificationPage from './gamification/GamificationPage';
+import ActualReportsPage from './reports/ReportsPage';
 
 export function EnvironmentalPage() {
   return <ActualEnvironmentalPage />;
@@ -43,40 +45,11 @@ export function GovernancePage() {
 }
 
 export function GamificationPage() {
-  return (
-    <ModulePlaceholder
-      emoji="🏆"
-      title="Gamification"
-      subtitle="Challenges, badges, rewards & leaderboards"
-      owner="P4"
-      sections={[
-        'Challenges (Draft → Active → Under Review → Completed)',
-        'Challenge Participation (XP award)',
-        'Badges (auto-awarded)',
-        'Rewards (redeem with points)',
-        'Leaderboard',
-      ]}
-    />
-  );
+  return <ActualGamificationPage />;
 }
 
 export function ReportsPage() {
-  return (
-    <ModulePlaceholder
-      emoji="📈"
-      title="Reports"
-      subtitle="Analytics & custom report builder"
-      owner="P4"
-      sections={[
-        'Environmental Report',
-        'Social Report',
-        'Governance Report',
-        'ESG Summary Report',
-        'Custom Report Builder (filters)',
-        'Export: PDF / Excel / CSV',
-      ]}
-    />
-  );
+  return <ActualReportsPage />;
 }
 
 export function NotFoundPage() {
@@ -90,3 +63,4 @@ export function NotFoundPage() {
     </div>
   );
 }
+
