@@ -91,3 +91,17 @@ export {
   leaderboardAPI,
   reportsAPI,
 } from './gamification';
+
+// TEAMMATES: Social + Governance (Tirth / P3)
+export {
+  csrActivitiesAPI,
+  participationsAPI,
+  diversityAPI,
+} from './social';
+
+export {
+  policiesAPI,
+  acknowledgementsAPI,
+  auditsAPI,
+  complianceIssuesAPI,
+} from './governance';

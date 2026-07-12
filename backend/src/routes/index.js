@@ -65,4 +65,21 @@ router.use('/rewards', rewardRoutes);
 router.use('/leaderboard', leaderboardRoutes);
 router.use('/reports', reportsRoutes);
 
+// TEAMMATES: Social + Governance (Tirth / P3)
+const csrActivityRoutes = require('./csrActivity.routes');
+const participationRoutes = require('./participation.routes');
+const socialRoutes = require('./social.routes');
+const policyRoutes = require('./policy.routes');
+const acknowledgementRoutes = require('./acknowledgement.routes');
+const auditRoutes = require('./audit.routes');
+const complianceIssueRoutes = require('./complianceIssue.routes');
+
+router.use('/csr-activities', csrActivityRoutes);
+router.use('/participations', participationRoutes);
+router.use('/social', socialRoutes);
+router.use('/policies', policyRoutes);
+router.use('/acknowledgements', acknowledgementRoutes);
+router.use('/audits', auditRoutes);
+router.use('/compliance-issues', complianceIssueRoutes);
+
 module.exports = router;
