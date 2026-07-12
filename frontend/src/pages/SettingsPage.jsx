@@ -15,7 +15,7 @@ import {
 } from '../components/ui';
 import { cn } from '../lib/utils';
 
-const TABS = ['Departments', 'Categories', 'ESG Configuration', 'Notifications'];
+const TABS = ['Users', 'Departments', 'Categories', 'ESG Configuration', 'Notifications'];
 
 function Toggle({ checked, onChange, label, hint }) {
   return (
@@ -346,8 +346,176 @@ function ConfigForm({ notificationsTab }) {
   );
 }
 
+/* ------------------ Users (admin RBAC) ------------------ */
+function UsersAdmin() {
+  const [rows, setRows] = useState(null);
+  const [depts, setDepts] = useState([]);
+  const [modal, setModal] = useState(null);
+  const [form, setForm] = useState({});
+
+  const load = async () => {
+    const [u, d] = await Promise.all([
+      usersAPI.getAll({ limit: 100 }),
+      departmentsAPI.getAll({ all: true }),
+    ]);
+    setRows(u.data.data.data);
+    setDepts(d.data.data.departments);
+  };
+  useEffect(() => {
+    load();
+  }, []);
+
+  const open = (row) => {
+    setForm(
+      row
+        ? { ...row, departmentId: row.departmentId || '' }
+        : { name: '', email: '', password: '', role: 'EMPLOYEE', departmentId: '' }
+    );
+    setModal(row || {});
+  };
+
+  const save = async () => {
+    try {
+      if (form.id) {
+        await usersAPI.update(form.id, {
+          name: form.name,
+          role: form.role,
+          departmentId: form.departmentId,
+          isActive: form.isActive,
+        });
+      } else {
+        await usersAPI.create(form);
+      }
+      toast.success('Saved');
+      setModal(null);
+      load();
+    } catch (e) {
+      toast.error(e.response?.data?.message || 'Save failed');
+    }
+  };
+  const remove = async (id) => {
+    if (!confirm('Delete this user?')) return;
+    try {
+      await usersAPI.remove(id);
+      toast.success('Deleted');
+      load();
+    } catch (e) {
+      toast.error(e.response?.data?.message || 'Delete failed');
+    }
+  };
+
+  if (!rows) return <PageLoader />;
+  return (
+    <Card
+      title="Users & Roles"
+      action={
+        <Button size="sm" onClick={() => open(null)}>
+          <Plus className="h-4 w-4" /> New user
+        </Button>
+      }
+    >
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-slate-100 text-left text-slate-500">
+              <th className="py-2 pr-4">Name</th>
+              <th className="py-2 pr-4">Email</th>
+              <th className="py-2 pr-4">Role</th>
+              <th className="py-2 pr-4">Department</th>
+              <th className="py-2 pr-4">XP</th>
+              <th className="py-2 pr-4">Status</th>
+              <th className="py-2" />
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((u) => (
+              <tr key={u.id} className="border-b border-slate-50">
+                <td className="py-2 pr-4 font-medium text-slate-700">{u.name}</td>
+                <td className="py-2 pr-4 text-slate-500">{u.email}</td>
+                <td className="py-2 pr-4"><Badge>{u.role}</Badge></td>
+                <td className="py-2 pr-4">{u.department?.name || '—'}</td>
+                <td className="py-2 pr-4">{u.xp}</td>
+                <td className="py-2 pr-4">
+                  <Badge status={u.isActive ? 'ACTIVE' : 'ARCHIVED'}>{u.isActive ? 'Active' : 'Inactive'}</Badge>
+                </td>
+                <td className="py-2">
+                  <div className="flex justify-end gap-1">
+                    <button onClick={() => open(u)} className="p-1.5 text-slate-400 hover:text-emerald-600">
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button onClick={() => remove(u.id)} className="p-1.5 text-slate-400 hover:text-rose-600">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <Modal
+        open={modal !== null}
+        onClose={() => setModal(null)}
+        title={form.id ? 'Edit User' : 'New User'}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setModal(null)}>Cancel</Button>
+            <Button onClick={save}>Save</Button>
+          </>
+        }
+      >
+        <div className="space-y-3">
+          <Input label="Name" value={form.name || ''} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <Input
+            label="Email"
+            type="email"
+            value={form.email || ''}
+            disabled={!!form.id}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          />
+          {!form.id && (
+            <Input
+              label="Password"
+              type="password"
+              value={form.password || ''}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              placeholder="min 6 chars, letters + numbers"
+            />
+          )}
+          <Select label="Role" value={form.role || 'EMPLOYEE'} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+            <option value="EMPLOYEE">Employee</option>
+            <option value="MANAGER">Manager</option>
+            <option value="ADMIN">Admin</option>
+          </Select>
+          <Select
+            label="Department"
+            value={form.departmentId || ''}
+            onChange={(e) => setForm({ ...form, departmentId: e.target.value })}
+          >
+            <option value="">— none —</option>
+            {depts.map((d) => (
+              <option key={d.id} value={d.id}>{d.name}</option>
+            ))}
+          </Select>
+          {form.id && (
+            <Select
+              label="Status"
+              value={form.isActive ? 'true' : 'false'}
+              onChange={(e) => setForm({ ...form, isActive: e.target.value === 'true' })}
+            >
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </Select>
+          )}
+        </div>
+      </Modal>
+    </Card>
+  );
+}
+
 export default function SettingsPage() {
-  const [tab, setTab] = useState('Departments');
+  const [tab, setTab] = useState('Users');
   return (
     <div>
       <PageHeader title="⚙ Settings" subtitle="Configuration & administration" />
@@ -365,6 +533,7 @@ export default function SettingsPage() {
           </button>
         ))}
       </div>
+      {tab === 'Users' && <UsersAdmin />}
       {tab === 'Departments' && <Departments />}
       {tab === 'Categories' && <Categories />}
       {tab === 'ESG Configuration' && <ConfigForm />}
